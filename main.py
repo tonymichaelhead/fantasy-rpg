@@ -31,7 +31,8 @@ class Game:
         # Initialize game window, etc
         pg.mixer.pre_init(44100, -16, 4, 2048)
         pg.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        # set pg.RESIZABLE flag to get resize event VIDEORESIZE size, w, h
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT), pg.RESIZABLE)
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.load_data()
@@ -124,8 +125,9 @@ class Game:
         self.mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         self.items = pg.sprite.Group()
-        self.map = TiledMap(path.join(self.map_folder, 'tiled1.tmx'))
+        self.map = TiledMap(path.join(self.map_folder, 'bigger-town.tmx'))
         self.map_img = self.map.make_map()
+        self.map_img = pg.transform.scale(self.map_img, (self.map.width, self.map.height))
         self.map_rect = self.map_img.get_rect()
         for tile_object in self.map.tmxdata.objects:
             obj_center = vec(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
@@ -165,8 +167,8 @@ class Game:
         self.all_sprites.update()
         self.camera.update(self.player)
         # Game over?
-        if len(self.mobs) == 0:
-            self.playing = False
+        # if len(self.mobs) == 0:
+        #     self.playing = False
         # Player hits items
         hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
@@ -253,9 +255,7 @@ class Game:
                     self.paused = not self.paused
                 if event.key == pg.K_n:
                     self.night = not self.night
-
-
-
+            
     def show_start_screen(self):
         # Game splash/start screen
         pass
