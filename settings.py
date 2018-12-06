@@ -14,13 +14,13 @@ YELLOW = (255, 255, 0)
 BROWN = (106, 55, 5)
 
 # Game options/settings
-WIDTH = 1600 # 16 * 64 or 32 * 32 or 64 * 16
-HEIGHT = 960 # 16 * 48 or 32 * 24 or 64 * 12
+WIDTH = 800 # 16 * 64 or 32 * 32 or 64 * 16
+HEIGHT = 480 # 16 * 48 or 32 * 24 or 64 * 12
 FPS = 60
 TITLE = "Tilemap demo"
 BGCOLOR = BROWN
 
-TILESIZE = 16
+TILESIZE = 32
 GRIDWIDTH = WIDTH / TILESIZE
 GRIDHEIGHT = HEIGHT / TILESIZE
 
@@ -31,6 +31,7 @@ PLAYER_HEALTH = 100
 PLAYER_SPEED = 300
 PLAYER_ROT_SPEED = 250
 PLAYER_IMG = 'manBlue_gun.png'
+PLAYER_SPRITESHEET = '32x32-hero.png'
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 BARREL_OFFSET = vec(30, 10)
 
@@ -89,7 +90,7 @@ BOB_RANGE = 15
 BOB_SPEED = 0.4
 
 # Sounds
-BG_MUSIC = 'espionage.ogg'
+BG_MUSIC = 'World Map.mp3'
 PLAYER_HIT_SOUNDS = ['pain/8.wav', 'pain/9.wav', 'pain/10.wav', 'pain/11.wav',]
 ZOMBIE_MOAN_SOUNDS = ['brains2.wav', 'brains3.wav', 'zombie-roar-1.wav', 'zombie-roar-2.wav',
                       'zombie-roar-3.wav', 'zombie-roar-5.wav', 'zombie-roar-6.wav', 'zombie-roar-7.wav']

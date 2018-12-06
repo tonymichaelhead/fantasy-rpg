@@ -26,15 +26,38 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
+class SpriteSheet:
+    # Utility class for loading and parsing sprite sheets
+    def __init__(self, filename):
+        self.spritesheet = pg.image.load(filename).convert_alpha()
+
+    def get_image(self, x, y, width, height):
+        # grab an image out of a larger spritesheet
+        image = pg.Surface((width, height), pg.SRCALPHA)
+        image.blit(self.spritesheet, (0,0), (x, y, width, height))
+        # Bunny scale
+        image = pg.transform.scale(image, (width // 2, height // 2))
+        # Ninja scale
+        # image = pg.transform.scale(image, (width // 2, height // 2))
+        return image
+
 class  Player(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self._layer = PLAYER_LAYER
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.player_img
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
+
+        self.facing = 'forward'
+        self.current_frame = 0
+        self.last_update = 0
+        self.load_images()
+        self.image = self.standing_frames_r[0]
+        self.rect = self.image.get_rect() 
+        # TODO: Deprecated
+        # self.image = game.player_img
+        # self.rect = self.image.get_rect()
+        # self.rect.center = (x, y)
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = self.rect.center
         self.vel = vec(0, 0)
@@ -44,6 +67,42 @@ class  Player(pg.sprite.Sprite):
         self.health = PLAYER_HEALTH
         self.weapon = 'pistol'
         self.damaged = False
+    
+    def load_images(self):
+        # Bunny frames
+        # self.standing_frames = [self.game.spritesheet.get_image(614, 1063, 120, 191),
+        #                         self.game.spritesheet.get_image(690, 406, 120, 201)]
+        # for frame in self.standing_frames:
+        #     frame.set_colorkey(BLACK)
+        # self.walk_frames_r = [self.game.spritesheet.get_image(678, 860, 120, 201),
+        #                         self.game.spritesheet.get_image(692, 1458, 120, 207)]
+        # self.walk_frames_l = []
+        # for frame in self.walk_frames_r:
+        #     frame.set_colorkey(BLACK)
+        #     self.walk_frames_l.append(pg.transform.flip(frame, True, False))
+        # self.jump_frame = self.game.spritesheet.get_image(382, 763, 150, 181)
+        # self.jump_frame.set_colorkey(BLACK)
+        
+        # Ninja frames
+        # Standing
+        self.standing_frames_r = [self.game.spritesheet.get_image(8, 8, 72, 72)]
+        self.standing_frames_l = []
+        for frame in self.standing_frames_r:
+            self.standing_frames_l.append(pg.transform.flip(frame, True, False))
+        # Walking
+        self.walk_frames_r = [self.game.spritesheet.get_image(96, 8, 72, 72),
+                              self.game.spritesheet.get_image(188, 8, 72, 72),
+                              self.game.spritesheet.get_image(276, 8, 72, 72),
+                              self.game.spritesheet.get_image(360, 8, 72, 72)]
+        self.walk_frames_l = []
+        for frame in self.walk_frames_r:    
+            self.walk_frames_l.append(pg.transform.flip(frame, True, False))
+        # Jumping
+        self.jump_frame_r = self.game.spritesheet.get_image(100, 184, 72, 68)
+        self.jump_frame_l = pg.transform.flip(self.jump_frame_r, True, False)
+        # Throwing
+        self.throw_frame_r = self.game.spritesheet.get_image(104, 96, 64, 72)
+        self.throw_frame_l = pg.transform.flip(self.throw_frame_r, True, False)
 
     def get_keys(self):
         self.rot_speed = 0

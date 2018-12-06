@@ -67,12 +67,15 @@ class Game:
         img_folder = path.join(game_folder, 'img')
         snd_folder = path.join(game_folder, 'snd')
         music_folder = path.join(game_folder, 'music')
+        # Load sprite sheets
+        self.spritesheet = SpriteSheet(path.join(img_dir, PLAYER_SPRITESHEET))
         self.map_folder = path.join(game_folder, 'maps')
         self.title_font = path.join(img_folder, 'ZOMBIE.TTF')
         self.hud_font = path.join(img_folder, 'Impacted2.0.ttf')
         self.dim_screen = pg.Surface(self.screen.get_size()).convert_alpha()
         self.dim_screen.fill((0,0,0, 180))
-        self.player_img = pg.image.load(path.join(img_folder, PLAYER_IMG)).convert_alpha()
+        # TODO: this will be deprecated by loading sheets in player class
+        # self.player_img = pg.image.load(path.join(img_folder, PLAYER_IMG)).convert_alpha()
         self.bullet_images = {}
         self.bullet_images['lg'] = pg.image.load(path.join(img_folder, BULLET_IMG)).convert_alpha()
         self.bullet_images['lg'] = pg.transform.scale(self.bullet_images['lg'], (10, 10))
@@ -142,10 +145,10 @@ class Game:
                 Item(self, obj_center, tile_object.name)
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
-        self.effects_sounds['level_start'].play()
+        # self.effects_sounds['level_start'].play()
         self.paused = False
         self.night = False
-        self.effects_sounds['level_start'].play()
+        # self.effects_sounds['level_start'].play()
 
     def run(self):
         # Game loop - set self.playing = False to end the game
