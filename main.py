@@ -125,7 +125,7 @@ class Game:
         self.mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         self.items = pg.sprite.Group()
-        self.map = TiledMap(path.join(self.map_folder, 'bigger-town.tmx'))
+        self.map = TiledMap(path.join(self.map_folder, '32-town.tmx'))
         self.map_img = self.map.make_map()
         self.map_img = pg.transform.scale(self.map_img, (self.map.width, self.map.height))
         self.map_rect = self.map_img.get_rect()
@@ -144,7 +144,7 @@ class Game:
         self.draw_debug = False
         self.effects_sounds['level_start'].play()
         self.paused = False
-        self.night = True
+        self.night = False
         self.effects_sounds['level_start'].play()
 
     def run(self):
