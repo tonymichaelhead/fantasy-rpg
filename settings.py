@@ -28,10 +28,10 @@ WALL_IMG = 'tile_354.png'
 
 # Player settings
 PLAYER_HEALTH = 100
-PLAYER_SPEED = 250
+PLAYER_SPEED = 300
 PLAYER_ROT_SPEED = 250
 PLAYER_IMG = 'manBlue_gun.png'
-PLAYER_SPRITESHEET = '32x32-hero.png'
+PLAYER_SPRITESHEET = 'test-hero.png'
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 BARREL_OFFSET = vec(30, 10)
 
