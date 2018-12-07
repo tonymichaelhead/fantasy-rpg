@@ -28,7 +28,7 @@ WALL_IMG = 'tile_354.png'
 
 # Player settings
 PLAYER_HEALTH = 100
-PLAYER_SPEED = 300
+PLAYER_SPEED = 250
 PLAYER_ROT_SPEED = 250
 PLAYER_IMG = 'manBlue_gun.png'
 PLAYER_SPRITESHEET = '32x32-hero.png'

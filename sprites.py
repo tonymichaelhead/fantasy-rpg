@@ -47,13 +47,12 @@ class  Player(pg.sprite.Sprite):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-
+        self.walking = False
         self.facing = 'forward'
         self.current_frame = 0
         self.last_update = 0
         self.load_images()
         self.image = self.standing_frame_f
-        self.image = pg.transform.scale(self.image, (36, 48))
         self.rect = self.image.get_rect() 
         # TODO: Deprecated
         # self.image = game.player_img
@@ -87,14 +86,18 @@ class  Player(pg.sprite.Sprite):
         # Hero frames TODO: Flesh out!
         # Standing
         self.standing_frame_f = self.game.spritesheet.get_image(35, 63, 24, 32)
+        self.standing_frame_f = pg.transform.scale(self.standing_frame_f, (36, 48))
         # self.standing_frames_r = [self.game.spritesheet.get_image(8, 8, 72, 72)]
         # self.standing_frames_l = []
         # for frame in self.standing_frames_r:
         #     self.standing_frames_l.append(pg.transform.flip(frame, True, False))
         # # Walking
-        self.walk_frames_f = [self.game.spritesheet.get_image(26, 8, 26, 31),
+        self.raw_walk_frames_f = [self.game.spritesheet.get_image(3, 65, 26, 31),
                               self.game.spritesheet.get_image(35, 63, 24, 32),
-                              self.game.spritesheet.get_image(96, 8, 26, 32)]
+                              self.game.spritesheet.get_image(67, 65, 26, 32)]
+        self.walk_frames_f = []
+        for frame in self.raw_walk_frames_f:
+            self.walk_frames_f.append(pg.transform.scale(frame, (36, 48)))
 
         # self.walk_frames_r = [self.game.spritesheet.get_image(96, 8, 72, 72),
         #                       self.game.spritesheet.get_image(188, 8, 72, 72),
@@ -121,7 +124,11 @@ class  Player(pg.sprite.Sprite):
         if keys[pg.K_UP] or keys[pg.K_w]:
             self.vel = vec(0, -PLAYER_SPEED).rotate(-self.rot)
         if keys[pg.K_DOWN] or keys[pg.K_r]:
+            self.walking = True
+            self.facing = 'forward'
             self.vel = vec(0, PLAYER_SPEED).rotate(-self.rot)
+        else:
+            self.walking = False
         if keys[pg.K_SPACE]:
             self.shoot()
             
@@ -147,9 +154,11 @@ class  Player(pg.sprite.Sprite):
         self.damage_alpha = chain(DAMAGE_ALPHA * 4)
 
     def update(self):
+        self.animate()
         self.get_keys()
-        self.rot = (self.rot + self.rot_speed * self.game.dt) % 360
-        self.image = pg.transform.rotate(self.image, self.rot)
+        
+        # self.rot = (self.rot + self.rot_speed * self.game.dt) % 360 TODO: probably not gonna rotate
+        # self.image = pg.transform.rotate(self.image, self.rot)
         if self.damaged:
             try:
                 self.image.fill((255, 255, 255, next(self.damage_alpha)), special_flags=pg.BLEND_RGBA_MULT)
@@ -164,6 +173,60 @@ class  Player(pg.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
+        if not self.walking:
+            if self.facing == 'forward':
+                self.image = self.standing_frame_f
+
+    def animate(self):
+        now = pg.time.get_ticks()
+        # if self.vel.x != 0:
+        #     self.walking = True
+        # else:
+        #     self.walking = False
+
+        # Show walk animation
+        # if self.walking:
+        #     if now - self.last_update > 50:
+        #         self.last_update = now
+        #         self.current_frame = (self.current_frame + 1) % len(self.walk_frames_f)
+        #         bottom = self.rect.bottom
+        #         if self.vel.y > 0:
+        #             self.facing = 'forward'
+        #             self.image = self.walk_frames_f[self.current_frame]
+        #         # if self.vel.x > 0:
+        #         #     self.facing = 'right'
+        #         #     self.image = self.walk_frames_r[self.current_frame]
+        #         # else:
+        #         #     self.facing = 'left'
+        #         #     self.image = self.walk_frames_l[self.current_frame]
+        #         self.rect = self.image.get_rect()
+        #         self.rect.bottom = bottom 
+
+        
+        if self.walking:
+            if now - self.last_update > 100:
+                self.last_update = now
+                if self.facing == 'forward':
+                    self.current_frame = (self.current_frame + 1) % len(self.walk_frames_f)
+                    bottom = self.rect.bottom
+                    self.facing = 'forward'
+                    self.image = self.walk_frames_f[self.current_frame]
+                    self.rect = self.image.get_rect()
+                    self.rect.bottom = bottom
+
+        # # Show idle animation
+        # if not self.jumping and not self.walking:
+        #     if now - self.last_update > 350:
+        #         self.last_update = now
+        #         self.current_frame = (self.current_frame + 1) % len(self.standing_frames_r)
+        #         bottom = self.rect.bottom
+        #         if self.facing == 'right': 
+        #             self.image = self.standing_frames_r[self.current_frame]
+        #         else:    
+        #             self.image = self.standing_frames_l[self.current_frame]
+        #         self.rect = self.image.get_rect()
+        #         self.rect.bottom = bottom
+        # self.mask = pg.mask.from_surface(self.image)
 
     def add_health(self, amount):
         self.health += amount
