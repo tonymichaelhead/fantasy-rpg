@@ -63,7 +63,7 @@ class  Player(pg.sprite.Sprite):
         self.rot = 0
         self.last_shot = 0
         self.health = PLAYER_HEALTH
-        self.weapon = 'pistol'
+        self.weapon = 'shotgun'
         self.damaged = False
     
     def load_images(self):
@@ -161,9 +161,10 @@ class  Player(pg.sprite.Sprite):
 
     def update(self):
         self.get_keys()
-        # self.animate()
-        # self.rot = (self.rot + self.rot_speed * self.game.dt) % 360 TODO: probably not gonna rotate
+        self.animate()
+        # self.rot = (self.rot + self.rot_speed * self.game.dt) % 360 #TODO: probably not gonna rotate
         # self.image = pg.transform.rotate(self.image, self.rot)
+        self.image = self.image.copy() # A copy seems to need to be made for damage
         if self.damaged:
             try:
                 pass
