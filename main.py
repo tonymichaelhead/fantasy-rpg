@@ -68,7 +68,7 @@ class Game:
         snd_folder = path.join(game_folder, 'snd')
         music_folder = path.join(game_folder, 'music')
         # Load sprite sheets
-        self.spritesheet = SpriteSheet(path.join(img_dir, PLAYER_SPRITESHEET))
+        self.spritesheet = SpriteSheet(path.join(img_folder, PLAYER_SPRITESHEET))
         self.map_folder = path.join(game_folder, 'maps')
         self.title_font = path.join(img_folder, 'ZOMBIE.TTF')
         self.hud_font = path.join(img_folder, 'Impacted2.0.ttf')

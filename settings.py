@@ -14,8 +14,8 @@ YELLOW = (255, 255, 0)
 BROWN = (106, 55, 5)
 
 # Game options/settings
-WIDTH = 800 # 16 * 64 or 32 * 32 or 64 * 16
-HEIGHT = 480 # 16 * 48 or 32 * 24 or 64 * 12
+WIDTH = 1600 # 16 * 64 or 32 * 32 or 64 * 16
+HEIGHT = 960 # 16 * 48 or 32 * 24 or 64 * 12
 FPS = 60
 TITLE = "Tilemap demo"
 BGCOLOR = BROWN

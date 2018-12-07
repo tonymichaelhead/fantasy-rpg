@@ -52,7 +52,8 @@ class  Player(pg.sprite.Sprite):
         self.current_frame = 0
         self.last_update = 0
         self.load_images()
-        self.image = self.standing_frames_r[0]
+        self.image = self.standing_frame_f
+        self.image = pg.transform.scale(self.image, (36, 48))
         self.rect = self.image.get_rect() 
         # TODO: Deprecated
         # self.image = game.player_img
@@ -83,39 +84,44 @@ class  Player(pg.sprite.Sprite):
         # self.jump_frame = self.game.spritesheet.get_image(382, 763, 150, 181)
         # self.jump_frame.set_colorkey(BLACK)
         
-        # Ninja frames
+        # Hero frames TODO: Flesh out!
         # Standing
-        self.standing_frames_r = [self.game.spritesheet.get_image(8, 8, 72, 72)]
-        self.standing_frames_l = []
-        for frame in self.standing_frames_r:
-            self.standing_frames_l.append(pg.transform.flip(frame, True, False))
-        # Walking
-        self.walk_frames_r = [self.game.spritesheet.get_image(96, 8, 72, 72),
-                              self.game.spritesheet.get_image(188, 8, 72, 72),
-                              self.game.spritesheet.get_image(276, 8, 72, 72),
-                              self.game.spritesheet.get_image(360, 8, 72, 72)]
-        self.walk_frames_l = []
-        for frame in self.walk_frames_r:    
-            self.walk_frames_l.append(pg.transform.flip(frame, True, False))
-        # Jumping
-        self.jump_frame_r = self.game.spritesheet.get_image(100, 184, 72, 68)
-        self.jump_frame_l = pg.transform.flip(self.jump_frame_r, True, False)
-        # Throwing
-        self.throw_frame_r = self.game.spritesheet.get_image(104, 96, 64, 72)
-        self.throw_frame_l = pg.transform.flip(self.throw_frame_r, True, False)
+        self.standing_frame_f = self.game.spritesheet.get_image(35, 63, 24, 32)
+        # self.standing_frames_r = [self.game.spritesheet.get_image(8, 8, 72, 72)]
+        # self.standing_frames_l = []
+        # for frame in self.standing_frames_r:
+        #     self.standing_frames_l.append(pg.transform.flip(frame, True, False))
+        # # Walking
+        self.walk_frames_f = [self.game.spritesheet.get_image(26, 8, 26, 31),
+                              self.game.spritesheet.get_image(35, 63, 24, 32),
+                              self.game.spritesheet.get_image(96, 8, 26, 32)]
+
+        # self.walk_frames_r = [self.game.spritesheet.get_image(96, 8, 72, 72),
+        #                       self.game.spritesheet.get_image(188, 8, 72, 72),
+        #                       self.game.spritesheet.get_image(276, 8, 72, 72),
+        #                       self.game.spritesheet.get_image(360, 8, 72, 72)]
+        # self.walk_frames_l = []
+        # for frame in self.walk_frames_r:    
+        #     self.walk_frames_l.append(pg.transform.flip(frame, True, False))
+        # # Jumping
+        # self.jump_frame_r = self.game.spritesheet.get_image(100, 184, 72, 68)
+        # self.jump_frame_l = pg.transform.flip(self.jump_frame_r, True, False)
+        # # Throwing
+        # self.throw_frame_r = self.game.spritesheet.get_image(104, 96, 64, 72)
+        # self.throw_frame_l = pg.transform.flip(self.throw_frame_r, True, False)
 
     def get_keys(self):
         self.rot_speed = 0
         self.vel = vec(0, 0)
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] or keys[pg.K_a]:
-            self.rot_speed = PLAYER_ROT_SPEED
+            self.vel = vec(-PLAYER_SPEED, 0).rotate(-self.rot)
         if keys[pg.K_RIGHT] or keys[pg.K_s]:
-            self.rot_speed = -PLAYER_ROT_SPEED
-        if keys[pg.K_UP] or keys[pg.K_w]:
             self.vel = vec(PLAYER_SPEED, 0).rotate(-self.rot)
+        if keys[pg.K_UP] or keys[pg.K_w]:
+            self.vel = vec(0, -PLAYER_SPEED).rotate(-self.rot)
         if keys[pg.K_DOWN] or keys[pg.K_r]:
-            self.vel = vec(-PLAYER_SPEED / 2, 0).rotate(-self.rot)
+            self.vel = vec(0, PLAYER_SPEED).rotate(-self.rot)
         if keys[pg.K_SPACE]:
             self.shoot()
             
@@ -143,7 +149,7 @@ class  Player(pg.sprite.Sprite):
     def update(self):
         self.get_keys()
         self.rot = (self.rot + self.rot_speed * self.game.dt) % 360
-        self.image = pg.transform.rotate(self.game.player_img, self.rot)
+        self.image = pg.transform.rotate(self.image, self.rot)
         if self.damaged:
             try:
                 self.image.fill((255, 255, 255, next(self.damage_alpha)), special_flags=pg.BLEND_RGBA_MULT)
