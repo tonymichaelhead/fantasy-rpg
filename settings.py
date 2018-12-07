@@ -17,7 +17,7 @@ BROWN = (106, 55, 5)
 WIDTH = 1600 # 16 * 64 or 32 * 32 or 64 * 16
 HEIGHT = 960 # 16 * 48 or 32 * 24 or 64 * 12
 FPS = 60
-TITLE = "Tilemap demo"
+TITLE = "Lion's Quest"
 BGCOLOR = BROWN
 
 TILESIZE = 32
@@ -33,7 +33,7 @@ PLAYER_ROT_SPEED = 250
 PLAYER_IMG = 'manBlue_gun.png'
 PLAYER_SPRITESHEET = 'test-hero.png'
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
-BARREL_OFFSET = vec(30, 10)
+BARREL_OFFSET = vec(0, 0)
 
 # Weapon settings
 BULLET_IMG = 'bullet.png'

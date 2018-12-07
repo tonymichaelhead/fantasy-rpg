@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="200" height="120" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="2">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="200" height="120" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="20">
  <tileset firstgid="1" name="32-rpg-town" tilewidth="32" tileheight="32" tilecount="396" columns="22">
   <image source="../img/32x32-transparent-rpg-town.png" width="704" height="576"/>
  </tileset>
@@ -387,5 +387,23 @@
  </layer>
  <objectgroup id="2" name="Obstacles">
   <object id="1" name="player" x="2640" y="1906" width="33" height="31"/>
+  <object id="2" name="zombie" x="3315" y="1824" width="28" height="28"/>
+  <object id="3" name="zombie" x="3504" y="1841" width="28" height="28"/>
+  <object id="4" name="zombie" x="3212" y="2298" width="28" height="28"/>
+  <object id="5" name="zombie" x="3540" y="2352" width="28" height="28"/>
+  <object id="6" name="zombie" x="2915" y="2423" width="28" height="28"/>
+  <object id="7" name="zombie" x="2793" y="2154" width="28" height="28"/>
+  <object id="8" name="zombie" x="3690" y="2626" width="28" height="28"/>
+  <object id="9" name="zombie" x="3800" y="1985" width="28" height="28"/>
+  <object id="10" name="zombie" x="3544" y="1033" width="28" height="28"/>
+  <object id="11" name="zombie" x="3095" y="1008" width="28" height="28"/>
+  <object id="12" name="zombie" x="2756" y="1092" width="28" height="28"/>
+  <object id="13" name="zombie" x="2617" y="902" width="28" height="28"/>
+  <object id="14" name="zombie" x="2819" y="686" width="28" height="28"/>
+  <object id="15" name="zombie" x="3274" y="802" width="28" height="28"/>
+  <object id="16" name="zombie" x="3388" y="1141" width="28" height="28"/>
+  <object id="17" name="zombie" x="3292" y="1232" width="28" height="28"/>
+  <object id="18" name="zombie" x="2921" y="1264" width="28" height="28"/>
+  <object id="19" name="zombie" x="2524" y="1410" width="28" height="28"/>
  </objectgroup>
 </map>

@@ -35,9 +35,7 @@ class SpriteSheet:
         # grab an image out of a larger spritesheet
         image = pg.Surface((width, height), pg.SRCALPHA)
         image.blit(self.spritesheet, (0,0), (x, y, width, height))
-        # Bunny scale
-        # image = pg.transform.scale(image, (width // 2, height // 2))
-        # Ninja scale
+        # For scaling images, leave commented out if not using
         # image = pg.transform.scale(image, (width // 2, height // 2))
         return image
 
@@ -69,30 +67,15 @@ class  Player(pg.sprite.Sprite):
         self.damaged = False
     
     def load_images(self):
-        # Bunny frames
-        # self.standing_frames = [self.game.spritesheet.get_image(614, 1063, 120, 191),
-        #                         self.game.spritesheet.get_image(690, 406, 120, 201)]
-        # for frame in self.standing_frames:
-        #     frame.set_colorkey(BLACK)
-        # self.walk_frames_r = [self.game.spritesheet.get_image(678, 860, 120, 201),
-        #                         self.game.spritesheet.get_image(692, 1458, 120, 207)]
-        # self.walk_frames_l = []
-        # for frame in self.walk_frames_r:
-        #     frame.set_colorkey(BLACK)
-        #     self.walk_frames_l.append(pg.transform.flip(frame, True, False))
-        # self.jump_frame = self.game.spritesheet.get_image(382, 763, 150, 181)
-        # self.jump_frame.set_colorkey(BLACK)
-        
         # Hero frames TODO: Flesh out!
         # Standing
         self.standing_frame_b = self.game.spritesheet.get_image(35, 63, 24, 32)
         self.standing_frame_b = pg.transform.scale(self.standing_frame_b, (36, 48))
         self.standing_frame_f = self.game.spritesheet.get_image(35, 63, 24, 32)
         self.standing_frame_f = pg.transform.scale(self.standing_frame_f, (36, 48))
-        # self.standing_frames_r = [self.game.spritesheet.get_image(8, 8, 72, 72)]
-        # self.standing_frames_l = []
-        # for frame in self.standing_frames_r:
-        #     self.standing_frames_l.append(pg.transform.flip(frame, True, False))
+        self.standing_frame_l = self.game.spritesheet.get_image(33, 0, 28, 32)
+        self.standing_frame_l = pg.transform.scale(self.standing_frame_l, (36, 48))
+        self.standing_frame_r = pg.transform.flip(self.standing_frame_l, True, False)
         # # Walking
         self.raw_walk_frames_b = [self.game.spritesheet.get_image(3, 65, 26, 31),
                                   self.game.spritesheet.get_image(35, 63, 24, 32),
@@ -116,14 +99,6 @@ class  Player(pg.sprite.Sprite):
         self.walk_frames_r = []
         for frame in self.walk_frames_l:
             self.walk_frames_r.append(pg.transform.flip(frame, True, False))
-
-        # self.walk_frames_r = [self.game.spritesheet.get_image(96, 8, 72, 72),
-        #                       self.game.spritesheet.get_image(188, 8, 72, 72),
-        #                       self.game.spritesheet.get_image(276, 8, 72, 72),
-        #                       self.game.spritesheet.get_image(360, 8, 72, 72)]
-        # self.walk_frames_l = []
-        # for frame in self.walk_frames_r:    
-        #     self.walk_frames_l.append(pg.transform.flip(frame, True, False))
         # # Jumping
         # self.jump_frame_r = self.game.spritesheet.get_image(100, 184, 72, 68)
         # self.jump_frame_l = pg.transform.flip(self.jump_frame_r, True, False)
@@ -186,12 +161,12 @@ class  Player(pg.sprite.Sprite):
 
     def update(self):
         self.get_keys()
-        self.animate()
-        
+        # self.animate()
         # self.rot = (self.rot + self.rot_speed * self.game.dt) % 360 TODO: probably not gonna rotate
         # self.image = pg.transform.rotate(self.image, self.rot)
         if self.damaged:
             try:
+                pass
                 self.image.fill((255, 255, 255, next(self.damage_alpha)), special_flags=pg.BLEND_RGBA_MULT)
             except:
                 self.damaged = False
@@ -209,6 +184,10 @@ class  Player(pg.sprite.Sprite):
                 self.image = self.standing_frame_b
             elif self.facing == 'forward':
                 self.image = self.standing_frame_f
+            elif self.facing == 'left':
+                self.image = self.standing_frame_l
+            elif self.facing == 'right':
+                self.image = self.standing_frame_r
 
     def animate(self):
         now = pg.time.get_ticks()
@@ -241,13 +220,13 @@ class  Player(pg.sprite.Sprite):
                 if self.facing == 'back':
                     self.facing = 'back'
                     self.image = self.walk_frames_b[self.current_frame]
-                if self.facing == 'forward':
+                elif self.facing == 'forward':
                     self.facing = 'forward'
                     self.image = self.walk_frames_f[self.current_frame]
-                if self.facing == 'left':
+                elif self.facing == 'left':
                     self.facing = 'left'
                     self.image = self.walk_frames_l[self.current_frame]
-                if self.facing == 'right':
+                elif self.facing == 'right':
                     self.facing = 'right'
                     self.image = self.walk_frames_r[self.current_frame]
                 self.rect = self.image.get_rect()
