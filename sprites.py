@@ -160,7 +160,6 @@ class  Player(pg.sprite.Sprite):
         self.damage_alpha = chain(DAMAGE_ALPHA * 4)
 
     def update(self):
-        print(self.facing)
         self.get_keys()
         self.animate()
         # self.rot = (self.rot + self.rot_speed * self.game.dt) % 360 #TODO: probably not gonna rotate
@@ -311,7 +310,7 @@ class Mob(pg.sprite.Sprite):
             choice(self.game.zombie_hit_sounds).play()
             self.kill()
             self.game.map_img.blit(self.game.splat, self.pos - vec(32, 32))
-
+    
     def draw_health(self):
         if self.health > 60:
             col = GREEN
@@ -323,6 +322,69 @@ class Mob(pg.sprite.Sprite):
         self.health_bar = pg.Rect(0, 0, width, 7)
         if self.health < MOB_HEALTH:
             pg.draw.rect(self.image, col, self.health_bar)
+
+class SkeletonMob(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self._layer = MOB_LAYER
+        self.groups = game.all_sprites, game.skeleton_mobs
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        # self.image = game.mob_img.copy()
+        self.load_images()
+        self.image = self.standing_frame_r
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.hit_rect = MOB_HIT_RECT.copy()
+        self.hit_rect.center = self.rect.center
+        self.pos = vec(x, y)
+        self.vel = vec(0, 0)
+        self.acc = (0, 0)
+        self.rect.center = self.pos
+        self.rot = 0
+        self.health = MOB_HEALTH
+        self.speed = choice(MOB_SPEEDS)
+        self.target = game.player
+    
+    def load_images(self):
+        # Standing
+        self.standing_frame_r = self.game.mob_spritesheet.get_image(56, 155, 29, 35)
+        self.standing_frame_r = pg.transform.scale(self.standing_frame_r, (36, 48))
+        self.standing_frame_l = pg.transform.flip(self.standing_frame_r, True, False) 
+
+    def avoid_mobs(self):
+        for mob in self.game.mobs:
+            if mob != self:
+                dist = self.pos - mob.pos
+                if 0 < dist.length() < AVOID_RADIUS:
+                    self.acc += dist.normalize()
+
+    def update(self):
+        target_dist = self.target.pos - self.pos
+        if target_dist.length_squared() < DETECT_RADIUS**2:
+            if random() < 0.002:
+                choice(self.game.zombie_moan_sounds).play()
+            # self.rot = target_dist.angle_to(vec(1, 0))
+            # self.image = pg.transform.rotate(self.game.mob_img, self.rot)
+            # self.rect = self.image.get_rect()
+            self.rect.center = self.pos
+            player_direction = target_dist.angle_to(vec(1, 0))
+            # self.acc = vec(1, 0).rotate(-self.rot)
+            # TODO: Check if player_direcion is a vector
+            self.acc = target_dist.normalize()
+            self.avoid_mobs()
+            self.acc.scale_to_length(self.speed)
+            self.acc += self.vel * -1
+            self.vel += self.acc * self.game.dt
+            self.pos += self.vel * self.game.dt + 0.5 * self.acc * self.game.dt ** 2
+            self.hit_rect.centerx = self.pos.x
+            collide_with_walls(self, self.game.walls, 'x')
+            self.hit_rect.centery = self.pos.y
+            collide_with_walls(self, self.game.walls, 'y')
+            self.rect.center = self.hit_rect.center
+        if self.health <= 0:
+            choice(self.game.zombie_hit_sounds).play()
+            self.kill()
+            self.game.map_img.blit(self.game.splat, self.pos - vec(32, 32))
 
 class Bullet(pg.sprite.Sprite):
     def __init__(self, game, pos, dir, damage):

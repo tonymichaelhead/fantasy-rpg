@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="200" height="120" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="20">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="200" height="120" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="21">
  <tileset firstgid="1" name="32-rpg-town" tilewidth="32" tileheight="32" tilecount="396" columns="22">
   <image source="../img/32x32-transparent-rpg-town.png" width="704" height="576"/>
  </tileset>
@@ -405,5 +405,6 @@
   <object id="17" name="zombie" x="3292" y="1232" width="28" height="28"/>
   <object id="18" name="zombie" x="2921" y="1264" width="28" height="28"/>
   <object id="19" name="zombie" x="2524" y="1410" width="28" height="28"/>
+  <object id="20" name="skeleton" x="2107" y="1555" width="28" height="28"/>
  </objectgroup>
 </map>

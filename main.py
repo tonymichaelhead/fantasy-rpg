@@ -69,6 +69,7 @@ class Game:
         music_folder = path.join(game_folder, 'music')
         # Load sprite sheets
         self.spritesheet = SpriteSheet(path.join(img_folder, PLAYER_SPRITESHEET))
+        self.mob_spritesheet = SpriteSheet(path.join(img_folder, MOB_SPRITESHEET))
         self.map_folder = path.join(game_folder, 'maps')
         self.title_font = path.join(img_folder, 'ZOMBIE.TTF')
         self.hud_font = path.join(img_folder, 'Impacted2.0.ttf')
@@ -126,6 +127,7 @@ class Game:
         self.all_sprites = pg.sprite.LayeredUpdates()
         self.walls = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
+        self.skeleton_mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         self.items = pg.sprite.Group()
         self.map = TiledMap(path.join(self.map_folder, '32-town.tmx'))
@@ -138,6 +140,8 @@ class Game:
                 self.player = Player(self, obj_center.x, obj_center.y)
             if tile_object.name == 'zombie':
                 Mob(self, obj_center.x, obj_center.y)
+            if tile_object.name == 'skeleton':
+                SkeletonMob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)

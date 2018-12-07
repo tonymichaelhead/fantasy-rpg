@@ -49,12 +49,16 @@ WEAPONS['pistol'] = {'bullet_speed': 500,
 WEAPONS['shotgun'] = {'bullet_speed': 350,
                       'bullet_lifetime': 1000,
                       'rate': 900,
-                      'kickback': 450,
+                      'kickback': 2000,
                       'spread': 20,
                       'damage': 5,
                       'bullet_size': 'sm',
                       'bullet_count': 12}
 
+# Mob spritesheets
+MOB_SPRITESHEET = 'rpgcritters2.png'
+
+# Mob template/Zombie
 # Mob settings
 MOB_IMG = 'zoimbie1_hold.png'
 MOB_SPEEDS = [150, 100, 75, 175, 150] 
@@ -64,6 +68,7 @@ MOB_DAMAGE = 10
 MOB_KNOCKBACK = 20
 AVOID_RADIUS = 50
 DETECT_RADIUS = 400
+
 
 # Effects
 MUZZLE_FLASHES = ['smoke_05.png', 'smoke_06.png', 'smoke_07.png', 'smoke_08.png']
