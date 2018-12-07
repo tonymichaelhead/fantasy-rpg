@@ -46,7 +46,7 @@ class  Player(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.walking = False
-        self.facing = 'back'
+        self.facing = 'forward'
         self.current_frame = 0
         self.last_update = 0
         self.load_images()
@@ -71,7 +71,7 @@ class  Player(pg.sprite.Sprite):
         # Standing
         self.standing_frame_b = self.game.spritesheet.get_image(35, 63, 24, 32)
         self.standing_frame_b = pg.transform.scale(self.standing_frame_b, (36, 48))
-        self.standing_frame_f = self.game.spritesheet.get_image(35, 63, 24, 32)
+        self.standing_frame_f = self.game.spritesheet.get_image(35, 32, 26, 31)
         self.standing_frame_f = pg.transform.scale(self.standing_frame_f, (36, 48))
         self.standing_frame_l = self.game.spritesheet.get_image(33, 0, 28, 32)
         self.standing_frame_l = pg.transform.scale(self.standing_frame_l, (36, 48))
@@ -160,6 +160,7 @@ class  Player(pg.sprite.Sprite):
         self.damage_alpha = chain(DAMAGE_ALPHA * 4)
 
     def update(self):
+        print(self.facing)
         self.get_keys()
         self.animate()
         # self.rot = (self.rot + self.rot_speed * self.game.dt) % 360 #TODO: probably not gonna rotate
@@ -219,19 +220,26 @@ class  Player(pg.sprite.Sprite):
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frames_b)
                 bottom = self.rect.bottom
                 if self.facing == 'back':
-                    self.facing = 'back'
+                    # self.facing = 'back'
                     self.image = self.walk_frames_b[self.current_frame]
                 elif self.facing == 'forward':
-                    self.facing = 'forward'
+                    # self.facing = 'forward'
                     self.image = self.walk_frames_f[self.current_frame]
                 elif self.facing == 'left':
-                    self.facing = 'left'
+                    # self.facing = 'left'
                     self.image = self.walk_frames_l[self.current_frame]
                 elif self.facing == 'right':
-                    self.facing = 'right'
+                    # self.facing = 'right'
                     self.image = self.walk_frames_r[self.current_frame]
                 self.rect = self.image.get_rect()
                 self.rect.bottom = bottom
+        # else: # TODO: MAYBE??
+        #     bottom = self.rect.bottom
+        #     self.last_update = now
+        #     self.current_frame = (self.current_frame + 1) % len(self.walk_frames_b)
+        #     self.rect = self.image.get_rect()
+        #     self.rect.bottom = bottom
+
         # # Show idle animation
         # if not self.jumping and not self.walking:
         #     if now - self.last_update > 350:
