@@ -63,7 +63,7 @@ class  Player(pg.sprite.Sprite):
         self.rot = 0
         self.last_shot = 0
         self.health = PLAYER_HEALTH
-        self.weapon = 'shotgun'
+        self.weapon = 'pistol'
         self.damaged = False
     
     def load_images(self):
@@ -128,6 +128,11 @@ class  Player(pg.sprite.Sprite):
             self.vel = vec(0, PLAYER_SPEED).rotate(-self.rot)
         else:
             self.walking = False
+        
+        if keys[pg.K_1]:
+            self.weapon = 'pistol'
+        if keys[pg.K_2]:
+            self.weapon = 'shotgun'
         if keys[pg.K_SPACE]:
             self.shoot()
             
@@ -326,12 +331,11 @@ class Mob(pg.sprite.Sprite):
 class SkeletonMob(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self._layer = MOB_LAYER
-        self.groups = game.all_sprites, game.skeleton_mobs
+        self.groups = game.all_sprites, game.mobs, game.skeleton_mobs
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        # self.image = game.mob_img.copy()
         self.load_images()
-        self.image = self.standing_frame_r
+        self.image = self.standing_frame_r.copy()
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.hit_rect = MOB_HIT_RECT.copy()
@@ -341,14 +345,15 @@ class SkeletonMob(pg.sprite.Sprite):
         self.acc = (0, 0)
         self.rect.center = self.pos
         self.rot = 0
-        self.health = MOB_HEALTH
-        self.speed = choice(MOB_SPEEDS)
+        self.health = SKELETON_MOB_HEALTH
+        self.speed = choice(SKELETON_MOB_SPEEDS)
         self.target = game.player
+        self.mode = 'dormant'
     
     def load_images(self):
         # Standing
         self.standing_frame_r = self.game.mob_spritesheet.get_image(56, 155, 29, 35)
-        self.standing_frame_r = pg.transform.scale(self.standing_frame_r, (36, 48))
+        self.standing_frame_r = pg.transform.scale(self.standing_frame_r, (48, 57))
         self.standing_frame_l = pg.transform.flip(self.standing_frame_r, True, False) 
 
     def avoid_mobs(self):
@@ -358,7 +363,11 @@ class SkeletonMob(pg.sprite.Sprite):
                 if 0 < dist.length() < AVOID_RADIUS:
                     self.acc += dist.normalize()
 
+    def dormant(self):
+        pass # code to wander around
+
     def update(self):
+        self.image = self.standing_frame_r.copy()
         target_dist = self.target.pos - self.pos
         if target_dist.length_squared() < DETECT_RADIUS**2:
             if random() < 0.002:
@@ -366,12 +375,11 @@ class SkeletonMob(pg.sprite.Sprite):
             # self.rot = target_dist.angle_to(vec(1, 0))
             # self.image = pg.transform.rotate(self.game.mob_img, self.rot)
             # self.rect = self.image.get_rect()
-            self.rect.center = self.pos
-            player_direction = target_dist.angle_to(vec(1, 0))
+            self.rect.center = self.pos # TODO: probably should comment out
             # self.acc = vec(1, 0).rotate(-self.rot)
-            # TODO: Check if player_direcion is a vector
             self.acc = target_dist.normalize()
             self.avoid_mobs()
+            # print(self.acc)
             self.acc.scale_to_length(self.speed)
             self.acc += self.vel * -1
             self.vel += self.acc * self.game.dt
@@ -381,10 +389,25 @@ class SkeletonMob(pg.sprite.Sprite):
             self.hit_rect.centery = self.pos.y
             collide_with_walls(self, self.game.walls, 'y')
             self.rect.center = self.hit_rect.center
+        else:
+            # put into chill mode
+            pass
         if self.health <= 0:
-            choice(self.game.zombie_hit_sounds).play()
+            choice(self.game.skeleton_hit_sounds).play()
             self.kill()
-            self.game.map_img.blit(self.game.splat, self.pos - vec(32, 32))
+            self.game.map_img.blit(self.game.skeleton_parts, self.pos - vec(32, 32))
+     
+    def draw_health(self):
+        if self.health > 60:
+            col = GREEN
+        elif self.health > 30:
+            col = YELLOW
+        else:
+            col = RED
+        width = int(self.rect.width * self.health / SKELETON_MOB_HEALTH)
+        self.health_bar = pg.Rect(0, 5, width, 7)
+        if self.health < SKELETON_MOB_HEALTH:
+            pg.draw.rect(self.image, col, self.health_bar)
 
 class Bullet(pg.sprite.Sprite):
     def __init__(self, game, pos, dir, damage):

@@ -70,6 +70,7 @@ class Game:
         # Load sprite sheets
         self.spritesheet = SpriteSheet(path.join(img_folder, PLAYER_SPRITESHEET))
         self.mob_spritesheet = SpriteSheet(path.join(img_folder, MOB_SPRITESHEET))
+        self.skeleton_parts_spritesheet = SpriteSheet(path.join(img_folder, SKELETON_PARTS_SPRITESHEET))
         self.map_folder = path.join(game_folder, 'maps')
         self.title_font = path.join(img_folder, 'ZOMBIE.TTF')
         self.hud_font = path.join(img_folder, 'Impacted2.0.ttf')
@@ -86,6 +87,7 @@ class Game:
         self.wall_img = pg.transform.scale(self.wall_img, (TILESIZE, TILESIZE))
         self.splat = pg.image.load(path.join(img_folder, SPLAT)).convert_alpha()
         self.splat = pg.transform.scale(self.splat, (64, 64))
+        self.skeleton_parts = self.skeleton_parts_spritesheet.get_image(137, 256, 55, 57)
         self.gun_flashes = []
         for img in MUZZLE_FLASHES:
             self.gun_flashes.append(pg.image.load(path.join(img_folder, img)).convert_alpha())
@@ -121,6 +123,9 @@ class Game:
         self.zombie_hit_sounds = []
         for snd in ZOMBIE_HIT_SOUNDS:
             self.zombie_hit_sounds.append(pg.mixer.Sound(path.join(snd_folder,snd)))
+        self.skeleton_hit_sounds = []
+        for snd in SKELETON_HIT_SOUNDS:
+            self.skeleton_hit_sounds.append(pg.mixer.Sound(path.join(snd_folder,snd)))
 
     def new(self):
         # Start a new game and initialize all variables and do all the setup
@@ -130,7 +135,7 @@ class Game:
         self.skeleton_mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         self.items = pg.sprite.Group()
-        self.map = TiledMap(path.join(self.map_folder, '32-town.tmx'))
+        self.map = TiledMap(path.join(self.map_folder, 'begins.tmx'))
         self.map_img = self.map.make_map()
         self.map_img = pg.transform.scale(self.map_img, (self.map.width, self.map.height))
         self.map_rect = self.map_img.get_rect()
@@ -198,7 +203,11 @@ class Game:
                 self.playing = False
         if hits:
             self.player.hit()
-            self.player.pos += vec(MOB_KNOCKBACK, 0).rotate(-hits[0].rot)
+            target_dist = self.player.pos - hit.pos
+            self.player.acc = target_dist.normalize()
+            self.player.pos += (self.player.acc.x * MOB_KNOCKBACK, self.player.acc.y * MOB_KNOCKBACK)
+            # MOB_KNOCKBACK
+            # self.player.pos += vec(MOB_KNOCKBACK, target_dist[1]).rotate(-hits[0].rot)
         # Bullets hit mobs
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         for mob in hits:
@@ -227,7 +236,7 @@ class Game:
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         # self.draw_grid()
         for sprite in self.all_sprites:
-            if isinstance(sprite, Mob):
+            if isinstance(sprite, Mob) or isinstance(sprite, SkeletonMob):
                 sprite.draw_health()
             self.screen.blit(sprite.image, self.camera.apply(sprite))
             if self.draw_debug:
@@ -240,7 +249,7 @@ class Game:
         # *after* drawing everything, flip the display
         # HUD functions
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
-        self.draw_text("Zombies: {}".format(len(self.mobs)), self.hud_font, 30, WHITE, 
+        self.draw_text("Stats: {}".format(len(self.mobs)), self.hud_font, 30, WHITE, 
                        WIDTH - 10, 10, align="ne")
         if self.paused:
             self.screen.blit(self.dim_screen, (0, 0))

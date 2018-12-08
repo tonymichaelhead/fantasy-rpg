@@ -69,10 +69,14 @@ MOB_KNOCKBACK = 20
 AVOID_RADIUS = 50
 DETECT_RADIUS = 400
 
+# Skeleton mob settings
+SKELETON_MOB_SPEEDS = [25, 50, 75, 100] 
+SKELETON_MOB_HEALTH = 40
 
 # Effects
 MUZZLE_FLASHES = ['smoke_05.png', 'smoke_06.png', 'smoke_07.png', 'smoke_08.png']
 SPLAT = 'splat red.png'
+SKELETON_PARTS_SPRITESHEET = 'skeleton.png'
 FLASH_DURATION = 40
 DAMAGE_ALPHA = [i for i in range(0, 255, 55)]
 NIGHT_COLOR = (20, 20, 20)
@@ -100,6 +104,7 @@ PLAYER_HIT_SOUNDS = ['pain/8.wav', 'pain/9.wav', 'pain/10.wav', 'pain/11.wav',]
 ZOMBIE_MOAN_SOUNDS = ['brains2.wav', 'brains3.wav', 'zombie-roar-1.wav', 'zombie-roar-2.wav',
                       'zombie-roar-3.wav', 'zombie-roar-5.wav', 'zombie-roar-6.wav', 'zombie-roar-7.wav']
 ZOMBIE_HIT_SOUNDS = ['splat-15.wav']
+SKELETON_HIT_SOUNDS = ['wood_falling_03.ogg']
 WEAPON_SOUNDS = {'pistol': ['sfx_weapon_singleshot2.wav'],
                  'shotgun': ['shotgun.wav']}
 EFFECTS_SOUNDS = {'level_start': 'level_start.wav',
