@@ -140,16 +140,20 @@ class  Player(pg.sprite.Sprite):
         now = pg.time.get_ticks()
         if now - self.last_shot > WEAPONS[self.weapon]['rate']:
             self.last_shot = now
+            # Determine direction and kickback
             if self.facing == 'left':
                 dir = vec(-1, 0)
+                self.vel = vec(WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rot)
             elif self.facing == 'right':
                 dir = vec(1, 0)
+                self.vel = vec(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rot)        
             elif self.facing == 'forward':
                 dir = vec(0, -1)
+                self.vel = vec(0, WEAPONS[self.weapon]['kickback']).rotate(-self.rot)
             elif self.facing == 'back':
                 dir = vec(0, 1)
+                self.vel = vec(0, -WEAPONS[self.weapon]['kickback']).rotate(-self.rot)
             pos = self.pos + BARREL_OFFSET.rotate(-self.rot)
-            self.vel = vec(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rot)
             for i in range(WEAPONS[self.weapon]['bullet_count']):
                 spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
                 Bullet(self.game, pos, dir.rotate(spread), WEAPONS[self.weapon]['damage'])

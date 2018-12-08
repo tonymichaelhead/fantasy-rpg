@@ -206,12 +206,9 @@ class Game:
             target_dist = self.player.pos - hit.pos
             self.player.acc = target_dist.normalize()
             self.player.pos += (self.player.acc.x * MOB_KNOCKBACK, self.player.acc.y * MOB_KNOCKBACK)
-            # MOB_KNOCKBACK
-            # self.player.pos += vec(MOB_KNOCKBACK, target_dist[1]).rotate(-hits[0].rot)
         # Bullets hit mobs
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         for mob in hits:
-            # hit.health -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
             for bullet in hits[mob]:
                 mob.health -= bullet.damage
             mob.vel = vec(0, 0)
