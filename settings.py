@@ -36,7 +36,7 @@ PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 BARREL_OFFSET_l = vec(-23, 10)
 BARREL_OFFSET_r = vec(23, 10)
 BARREL_OFFSET_f = vec(0, -23)
-BARREL_OFFSET_b = vec(0, 23)
+BARREL_OFFSET_b = vec(-8, 26)
 
 # Weapon settings
 BULLET_IMG = 'bullet.png'

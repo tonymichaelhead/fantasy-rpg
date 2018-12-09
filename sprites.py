@@ -47,6 +47,7 @@ class  Player(pg.sprite.Sprite):
         self.game = game
         self.walking = False
         self.shooting = False
+        self.recovering = False
         self.facing = 'forward'
         self.current_frame = 0
         self.last_update = 0
@@ -66,12 +67,12 @@ class  Player(pg.sprite.Sprite):
         self.level = 1
         self.exp = 0
         self.last_shot = 0
+        self.last_recovering = 0
         self.health = PLAYER_HEALTH
         self.weapon = 'pistol'
         self.damaged = False
     
     def load_images(self):
-        # Hero frames TODO: Flesh out!
         # Standing
         self.standing_frame_b = self.game.spritesheet.get_image(35, 63, 24, 32)
         self.standing_frame_b = pg.transform.scale(self.standing_frame_b, (36, 48))
@@ -127,24 +128,27 @@ class  Player(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] or keys[pg.K_a]:
-            self.walking = True
-            self.facing = 'left'
-            self.vel = vec(-PLAYER_SPEED, 0).rotate(-self.rot)
+            if not self.recovering:
+                self.walking = True
+                self.facing = 'left'
+                self.vel = vec(-PLAYER_SPEED, 0).rotate(-self.rot)
         elif keys[pg.K_RIGHT] or keys[pg.K_s]:
-            self.walking = True
-            self.facing = 'right'
-            self.vel = vec(PLAYER_SPEED, 0).rotate(-self.rot)
+            if not self.recovering:
+                self.walking = True
+                self.facing = 'right'
+                self.vel = vec(PLAYER_SPEED, 0).rotate(-self.rot)
         elif keys[pg.K_UP] or keys[pg.K_w]:
-            self.walking = True
-            self.facing = 'forward'
-            self.vel = vec(0, -PLAYER_SPEED).rotate(-self.rot)
+            if not self.recovering:
+                self.walking = True
+                self.facing = 'forward'
+                self.vel = vec(0, -PLAYER_SPEED).rotate(-self.rot)
         elif keys[pg.K_DOWN] or keys[pg.K_r]:
-            self.walking = True
-            self.facing = 'back'
-            self.vel = vec(0, PLAYER_SPEED).rotate(-self.rot)
+            if not self.recovering:
+                self.walking = True
+                self.facing = 'back'
+                self.vel = vec(0, PLAYER_SPEED).rotate(-self.rot)
         else:
             self.walking = False
-        
         if keys[pg.K_1]:
             self.weapon = 'pistol'
         if keys[pg.K_2]:
@@ -166,6 +170,8 @@ class  Player(pg.sprite.Sprite):
         now = pg.time.get_ticks()
         if now - self.last_shot > WEAPONS[self.weapon]['rate']:
             self.last_shot = now
+            self.recovering = True
+            self.recovering_start = now
             # Determine direction and kickback
             if self.facing == 'left':
                 dir = vec(-1, 0)
@@ -197,8 +203,6 @@ class  Player(pg.sprite.Sprite):
                     snd.stop()
                 snd.play()
             MuzzleFlash(self.game, pos)
-        # else:
-        #     self.shooting = False
 
     def hit(self):
         self.damaged = True
@@ -207,6 +211,14 @@ class  Player(pg.sprite.Sprite):
     def update(self):
         self.calculateExp()
         self.get_keys()
+        if self.shooting:
+            now = pg.time.get_ticks() # Maybe move to a higher level of update() to share
+            if now - self.last_shot > WEAPONS[self.weapon]['rate']:
+                self.shooting = False
+        if self.recovering:
+            now = pg.time.get_ticks()
+            if now - self.recovering_start > WEAPONS[self.weapon]['rate']:
+                self.recovering = False
         self.animate()
         # self.rot = (self.rot + self.rot_speed * self.game.dt) % 360 #TODO: probably not gonna rotate
         # self.image = pg.transform.rotate(self.image, self.rot)
@@ -252,24 +264,23 @@ class  Player(pg.sprite.Sprite):
         #         #     self.image = self.walk_frames_l[self.current_frame]
         #         self.rect = self.image.get_rect()
         #         self.rect.bottom = bottom 
-        if self.shooting:
-            if now - self.last_update > 100:
-                self.last_update = now
-                # self.walking = False
-                self.current_frame = (self.current_frame + 1) % len(self.shooting_pistol_frames_l)
-                bottom = self.rect.bottom
-                if self.facing == 'back':
-                    self.image = self.shooting_pistol_frames_b[self.current_frame]
-                elif self.facing == 'forward':
-                    self.image = self.standing_frame_f
-                elif self.facing == 'left':
-                    self.image = self.shooting_pistol_frames_l[self.current_frame]
-                elif self.facing == 'right':
-                    self.image = self.shooting_pistol_frames_r[self.current_frame]
-                self.rect = self.image.get_rect()
-                self.rect.bottom = bottom
-            else:
-                self.shooting = False
+        if self.shooting and now - self.last_shot < WEAPONS[self.weapon]['rate']:
+            self.last_update = now
+            # self.walking = False
+            self.current_frame = (self.current_frame + 1) % len(self.shooting_pistol_frames_l)
+            bottom = self.rect.bottom
+            if self.facing == 'back':
+                self.image = self.shooting_pistol_frames_b[self.current_frame]
+            elif self.facing == 'forward':
+                self.image = self.standing_frame_f
+            elif self.facing == 'left':
+                self.image = self.shooting_pistol_frames_l[self.current_frame]
+            elif self.facing == 'right':
+                self.image = self.shooting_pistol_frames_r[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+            # else:
+            #     self.shooting = False
         elif self.walking:
             if now - self.last_update > 100:
                 self.last_update = now
