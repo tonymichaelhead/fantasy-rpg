@@ -130,6 +130,7 @@ class Game:
         # Start a new game and initialize all variables and do all the setup
         self.all_sprites = pg.sprite.LayeredUpdates()
         self.walls = pg.sprite.Group()
+        self.exits = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
         self.skeleton_mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
@@ -148,6 +149,9 @@ class Game:
                 SkeletonMob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
+                         tile_object.width, tile_object.height)
+            if tile_object.name == 'exit':
+                Exit(self, tile_object.map_file, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)
             if tile_object.name in ['health', 'shotgun']:
                 Item(self, obj_center, tile_object.name)
@@ -211,6 +215,11 @@ class Game:
             for bullet in hits[mob]:
                 mob.health -= bullet.damage
             mob.vel = vec(0, 0)
+        # Player hits exits
+        hits = pg.sprite.spritecollide(self.player, self.exits, False)
+        for hit in hits:
+            self.change_map(hit.map_file)
+
 
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
@@ -272,19 +281,20 @@ class Game:
                 if event.key == pg.K_n:
                     self.night = not self.night
                 if event.key == pg.K_l:
-                    self.changeMap('forest1.tmx')
+                    self.change_map('forest1.tmx')
                 if event.key == pg.K_u:
-                    self.changeMap('begins.tmx')
+                    self.change_map('begins.tmx')
     
-    def changeMap(self, mapFile):
+    def change_map(self, map_file):
         # Load new map, pass current game state to change maps mid game
         self.all_sprites.empty()
         self.walls.empty()
+        self.exits.empty()
         self.mobs.empty()
         self.skeleton_mobs.empty()
         self.bullets.empty()
         self.items.empty()
-        self.map = TiledMap(path.join(self.map_folder, mapFile))
+        self.map = TiledMap(path.join(self.map_folder, map_file))
         self.map_img = self.map.make_map()
         self.map_img = pg.transform.scale(self.map_img, (self.map.width, self.map.height))
         self.map_rect = self.map_img.get_rect()
@@ -298,6 +308,9 @@ class Game:
                 SkeletonMob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
+                         tile_object.width, tile_object.height)
+            if tile_object.name == 'exit':
+                Exit(self, tile_object.map_file, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)
             if tile_object.name in ['health', 'shotgun']:
                 Item(self, obj_center, tile_object.name)

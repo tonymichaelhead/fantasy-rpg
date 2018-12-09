@@ -97,7 +97,6 @@ class  Player(pg.sprite.Sprite):
         self.walk_frames_l = []
         for frame in self.raw_walk_frames_l:
             self.walk_frames_l.append(pg.transform.scale(frame, (36, 48)))
-        
         self.walk_frames_r = []
         for frame in self.walk_frames_l:
             self.walk_frames_r.append(pg.transform.flip(frame, True, False))
@@ -236,8 +235,6 @@ class  Player(pg.sprite.Sprite):
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
    
-      
-
     def animate(self):
         now = pg.time.get_ticks()
         # if self.vel.x != 0:
@@ -537,6 +534,18 @@ class Obstacle(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x
         self.rect.y = y
+
+class Exit(pg.sprite.Sprite):
+    def __init__(self, game, map_file, x, y, w, h):
+        self.groups = game.exits
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.rect = pg.Rect(x, y, w, h)
+        self.x = x
+        self.y = y
+        self.rect.x = x
+        self.rect.y = y
+        self.map_file = map_file
 
 class MuzzleFlash(pg.sprite.Sprite):
     def __init__(self, game, pos):
