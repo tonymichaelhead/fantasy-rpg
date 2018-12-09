@@ -61,7 +61,6 @@ class Game:
             text_rect.center = (x, y)
         self.screen.blit(text_surface, text_rect)
 
-
     def load_data(self):
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, 'img')
@@ -272,6 +271,41 @@ class Game:
                     self.paused = not self.paused
                 if event.key == pg.K_n:
                     self.night = not self.night
+                if event.key == pg.K_l:
+                    self.changeMap('forest1.tmx')
+                if event.key == pg.K_u:
+                    self.changeMap('begins.tmx')
+    
+    def changeMap(self, mapFile):
+        # Load new map, pass current game state to change maps mid game
+        self.all_sprites.empty()
+        self.walls.empty()
+        self.mobs.empty()
+        self.skeleton_mobs.empty()
+        self.bullets.empty()
+        self.items.empty()
+        self.map = TiledMap(path.join(self.map_folder, mapFile))
+        self.map_img = self.map.make_map()
+        self.map_img = pg.transform.scale(self.map_img, (self.map.width, self.map.height))
+        self.map_rect = self.map_img.get_rect()
+        for tile_object in self.map.tmxdata.objects:
+            obj_center = vec(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
+            if tile_object.name == 'player':
+                self.player = Player(self, obj_center.x, obj_center.y)
+            if tile_object.name == 'zombie':
+                Mob(self, obj_center.x, obj_center.y)
+            if tile_object.name == 'skeleton':
+                SkeletonMob(self, obj_center.x, obj_center.y)
+            if tile_object.name == 'wall':
+                Obstacle(self, tile_object.x, tile_object.y, 
+                         tile_object.width, tile_object.height)
+            if tile_object.name in ['health', 'shotgun']:
+                Item(self, obj_center, tile_object.name)
+        self.camera = Camera(self.map.width, self.map.height)
+        self.draw_debug = False
+        # self.effects_sounds['level_start'].play()
+        self.paused = False
+        self.night = False
             
     def show_start_screen(self):
         # Game splash/start screen

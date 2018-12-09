@@ -48,15 +48,12 @@ class  Player(pg.sprite.Sprite):
         self.walking = False
         self.shooting = False
         self.recovering = False
-        self.facing = 'forward'
+        self.facing = 'back'
         self.current_frame = 0
         self.last_update = 0
         self.load_images()
         self.image = self.standing_frame_b
-        self.rect = self.image.get_rect() 
-        # TODO: Deprecated
-        # self.image = game.player_img
-        # self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = self.rect.center
