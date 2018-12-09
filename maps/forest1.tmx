@@ -254,6 +254,8 @@
   <object id="87" name="exit" x="11" y="107" width="6" height="180">
    <properties>
     <property name="map_file" value="begins.tmx"/>
+    <property name="spawn_player_x" type="float" value="4256"/>
+    <property name="spawn_player_y" type="float" value="128"/>
    </properties>
   </object>
  </objectgroup>

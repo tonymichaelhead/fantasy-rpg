@@ -151,8 +151,9 @@ class Game:
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)
             if tile_object.name == 'exit':
-                Exit(self, tile_object.map_file, tile_object.x, tile_object.y, 
-                         tile_object.width, tile_object.height)
+                Exit(self, tile_object.map_file, tile_object.spawn_player_x, 
+                     tile_object.spawn_player_y, tile_object.x, tile_object.y,
+                     tile_object.width, tile_object.height)
             if tile_object.name in ['health', 'shotgun']:
                 Item(self, obj_center, tile_object.name)
         self.camera = Camera(self.map.width, self.map.height)
@@ -218,7 +219,7 @@ class Game:
         # Player hits exits
         hits = pg.sprite.spritecollide(self.player, self.exits, False)
         for hit in hits:
-            self.change_map(hit.map_file)
+            self.change_map(hit.map_file, hit.spawn_player_x, hit.spawn_player_y)
 
 
     def draw_grid(self):
@@ -280,14 +281,15 @@ class Game:
                     self.paused = not self.paused
                 if event.key == pg.K_n:
                     self.night = not self.night
-                if event.key == pg.K_l:
-                    self.change_map('forest1.tmx')
-                if event.key == pg.K_u:
-                    self.change_map('begins.tmx')
+                # if event.key == pg.K_l:
+                #     self.change_map('forest1.tmx')
+                # if event.key == pg.K_u:
+                #     self.change_map('begins.tmx')
     
-    def change_map(self, map_file):
+    def change_map(self, map_file, spawn_player_x, spawn_player_y):
         # Load new map, pass current game state to change maps mid game
         self.all_sprites.empty()
+        self.all_sprites.add(self.player)
         self.walls.empty()
         self.exits.empty()
         self.mobs.empty()
@@ -301,7 +303,8 @@ class Game:
         for tile_object in self.map.tmxdata.objects:
             obj_center = vec(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
             if tile_object.name == 'player':
-                self.player = Player(self, obj_center.x, obj_center.y)
+                self.player.pos.x = float(spawn_player_x) 
+                self.player.pos.y = float(spawn_player_y)
             if tile_object.name == 'zombie':
                 Mob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'skeleton':
@@ -310,8 +313,9 @@ class Game:
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)
             if tile_object.name == 'exit':
-                Exit(self, tile_object.map_file, tile_object.x, tile_object.y, 
-                         tile_object.width, tile_object.height)
+                Exit(self, tile_object.map_file, tile_object.spawn_player_x, 
+                     tile_object.spawn_player_y, tile_object.x, tile_object.y,
+                     tile_object.width, tile_object.height)
             if tile_object.name in ['health', 'shotgun']:
                 Item(self, obj_center, tile_object.name)
         self.camera = Camera(self.map.width, self.map.height)
