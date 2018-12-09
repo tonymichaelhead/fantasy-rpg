@@ -33,7 +33,10 @@ PLAYER_ROT_SPEED = 250
 PLAYER_IMG = 'manBlue_gun.png'
 PLAYER_SPRITESHEET = 'test-hero.png'
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
-BARREL_OFFSET = vec(0, 0)
+BARREL_OFFSET_l = vec(-23, 10)
+BARREL_OFFSET_r = vec(23, 10)
+BARREL_OFFSET_f = vec(0, -23)
+BARREL_OFFSET_b = vec(0, 23)
 
 # Weapon settings
 BULLET_IMG = 'bullet.png'

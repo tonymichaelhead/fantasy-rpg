@@ -56,7 +56,7 @@ class  Player(pg.sprite.Sprite):
         # TODO: Deprecated
         # self.image = game.player_img
         # self.rect = self.image.get_rect()
-        # self.rect.center = (x, y)
+        self.rect.center = (x, y)
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = self.rect.center
         self.vel = vec(0, 0)
@@ -111,6 +111,10 @@ class  Player(pg.sprite.Sprite):
         self.shooting_pistol_frames_r = []
         for frame in self.shooting_pistol_frames_l:
             self.shooting_pistol_frames_r.append(pg.transform.flip(frame, True, False))
+        self.raw_shooting_pistol_frames_b = [self.game.spritesheet.get_image(100, 66, 24, 30)]
+        self.shooting_pistol_frames_b = []
+        for frame in self.raw_shooting_pistol_frames_b:
+            self.shooting_pistol_frames_b.append(pg.transform.scale(frame, (36, 48)))
         # # Jumping
         # self.jump_frame_r = self.game.spritesheet.get_image(100, 184, 72, 68)
         # self.jump_frame_l = pg.transform.flip(self.jump_frame_r, True, False)
@@ -175,7 +179,15 @@ class  Player(pg.sprite.Sprite):
             elif self.facing == 'back':
                 dir = vec(0, 1)
                 self.vel = vec(0, -WEAPONS[self.weapon]['kickback'])
-            pos = self.pos + BARREL_OFFSET.rotate(-self.rot)
+            # Barrel Offset
+            if self.facing == 'right':
+                pos = self.pos + BARREL_OFFSET_r
+            if self.facing == 'left':
+                pos = self.pos + BARREL_OFFSET_l
+            if self.facing == 'forward':
+                pos = self.pos + BARREL_OFFSET_f
+            if self.facing == 'back':
+                pos = self.pos + BARREL_OFFSET_b
             for i in range(WEAPONS[self.weapon]['bullet_count']):
                 spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
                 Bullet(self.game, pos, dir.rotate(spread), WEAPONS[self.weapon]['damage'])
@@ -247,7 +259,7 @@ class  Player(pg.sprite.Sprite):
                 self.current_frame = (self.current_frame + 1) % len(self.shooting_pistol_frames_l)
                 bottom = self.rect.bottom
                 if self.facing == 'back':
-                    self.image = self.standing_frame_b
+                    self.image = self.shooting_pistol_frames_b[self.current_frame]
                 elif self.facing == 'forward':
                     self.image = self.standing_frame_f
                 elif self.facing == 'left':
