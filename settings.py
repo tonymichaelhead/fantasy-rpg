@@ -14,8 +14,8 @@ YELLOW = (255, 255, 0)
 BROWN = (106, 55, 5)
 
 # Game options/settings
-WIDTH = 1600 # 16 * 64 or 32 * 32 or 64 * 16
-HEIGHT = 960 # 16 * 48 or 32 * 24 or 64 * 12
+WIDTH = 1100 # 16 * 64 or 32 * 32 or 64 * 16
+HEIGHT = 620 # 16 * 48 or 32 * 24 or 64 * 12
 FPS = 60
 TITLE = "Lion's Quest"
 BGCOLOR = BROWN
@@ -40,7 +40,7 @@ BULLET_IMG = 'bullet.png'
 WEAPONS = {}
 WEAPONS['pistol'] = {'bullet_speed': 500,
                      'bullet_lifetime': 500,
-                     'rate': 175,
+                     'rate': 200,
                      'kickback': 200,
                      'spread': 5,
                      'damage': 10,
@@ -67,11 +67,12 @@ MOB_HEALTH = 100
 MOB_DAMAGE = 10
 MOB_KNOCKBACK = 20
 AVOID_RADIUS = 50
-DETECT_RADIUS = 400
+DETECT_RADIUS = 500
 
 # Skeleton mob settings
 SKELETON_MOB_SPEEDS = [25, 50, 75, 100] 
 SKELETON_MOB_HEALTH = 40
+SKELETON_EXP = 10
 
 # Effects
 MUZZLE_FLASHES = ['smoke_05.png', 'smoke_06.png', 'smoke_07.png', 'smoke_08.png']
@@ -84,7 +85,7 @@ LIGHT_RADIUS = (1000, 1000)
 LIGHT_MASK = "light_350_med.png"
 
 # Layers
-WALL_LAYER = 1
+WALL_LAYER = 3
 PLAYER_LAYER = 2
 BULLET_LAYER = 3
 MOB_LAYER = 2

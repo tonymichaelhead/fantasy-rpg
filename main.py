@@ -135,7 +135,7 @@ class Game:
         self.skeleton_mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         self.items = pg.sprite.Group()
-        self.map = TiledMap(path.join(self.map_folder, 'begins.tmx'))
+        self.map = TiledMap(path.join(self.map_folder, 'forest1.tmx'))
         self.map_img = self.map.make_map()
         self.map_img = pg.transform.scale(self.map_img, (self.map.width, self.map.height))
         self.map_rect = self.map_img.get_rect()
@@ -246,8 +246,12 @@ class Game:
         # *after* drawing everything, flip the display
         # HUD functions
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
-        self.draw_text("Stats: {}".format(len(self.mobs)), self.hud_font, 30, WHITE, 
+        self.draw_text("Stats", self.hud_font, 30, WHITE, 
                        WIDTH - 10, 10, align="ne")
+        self.draw_text("Lvl: {}".format(self.player.level), self.hud_font, 30, WHITE, 
+                       WIDTH - 10, 40, align="ne")
+        self.draw_text("Exp: {}".format(self.player.exp), self.hud_font, 30, WHITE, 
+                       WIDTH - 10, 70, align="ne")
         if self.paused:
             self.screen.blit(self.dim_screen, (0, 0))
             self.draw_text("Paused", self.title_font, 105, RED, WIDTH / 2, HEIGHT / 2, align="center")

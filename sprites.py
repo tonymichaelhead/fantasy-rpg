@@ -46,6 +46,7 @@ class  Player(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.walking = False
+        self.shooting = False
         self.facing = 'forward'
         self.current_frame = 0
         self.last_update = 0
@@ -61,6 +62,9 @@ class  Player(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         self.pos = vec(x, y)
         self.rot = 0
+        # Player Stats
+        self.level = 1
+        self.exp = 0
         self.last_shot = 0
         self.health = PLAYER_HEALTH
         self.weapon = 'pistol'
@@ -99,6 +103,14 @@ class  Player(pg.sprite.Sprite):
         self.walk_frames_r = []
         for frame in self.walk_frames_l:
             self.walk_frames_r.append(pg.transform.flip(frame, True, False))
+        # Shooting pistol
+        self.raw_shooting_pistol_frames_l = [self.game.spritesheet.get_image(100, 2, 28, 30)]
+        self.shooting_pistol_frames_l = []   
+        for frame in self.raw_shooting_pistol_frames_l:
+            self.shooting_pistol_frames_l.append(pg.transform.scale(frame, (36, 48)))
+        self.shooting_pistol_frames_r = []
+        for frame in self.shooting_pistol_frames_l:
+            self.shooting_pistol_frames_r.append(pg.transform.flip(frame, True, False))
         # # Jumping
         # self.jump_frame_r = self.game.spritesheet.get_image(100, 184, 72, 68)
         # self.jump_frame_l = pg.transform.flip(self.jump_frame_r, True, False)
@@ -134,7 +146,17 @@ class  Player(pg.sprite.Sprite):
         if keys[pg.K_2]:
             self.weapon = 'shotgun'
         if keys[pg.K_SPACE]:
+            self.shooting = True
             self.shoot()
+
+    def calculateExp(self):
+        if self.exp >= 100:
+            if self.exp > 100:
+                remainder = self.exp - 100
+            else:
+                remainder = 0
+            self.level += 1
+            self.exp = 0 + remainder
             
     def shoot(self):
         now = pg.time.get_ticks()
@@ -143,16 +165,16 @@ class  Player(pg.sprite.Sprite):
             # Determine direction and kickback
             if self.facing == 'left':
                 dir = vec(-1, 0)
-                self.vel = vec(WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rot)
+                self.vel = vec(WEAPONS[self.weapon]['kickback'], 0)
             elif self.facing == 'right':
                 dir = vec(1, 0)
-                self.vel = vec(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rot)        
+                self.vel = vec(-WEAPONS[self.weapon]['kickback'], 0)        
             elif self.facing == 'forward':
                 dir = vec(0, -1)
-                self.vel = vec(0, WEAPONS[self.weapon]['kickback']).rotate(-self.rot)
+                self.vel = vec(0, WEAPONS[self.weapon]['kickback'])
             elif self.facing == 'back':
                 dir = vec(0, 1)
-                self.vel = vec(0, -WEAPONS[self.weapon]['kickback']).rotate(-self.rot)
+                self.vel = vec(0, -WEAPONS[self.weapon]['kickback'])
             pos = self.pos + BARREL_OFFSET.rotate(-self.rot)
             for i in range(WEAPONS[self.weapon]['bullet_count']):
                 spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
@@ -163,12 +185,15 @@ class  Player(pg.sprite.Sprite):
                     snd.stop()
                 snd.play()
             MuzzleFlash(self.game, pos)
+        # else:
+        #     self.shooting = False
 
     def hit(self):
         self.damaged = True
         self.damage_alpha = chain(DAMAGE_ALPHA * 4)
 
     def update(self):
+        self.calculateExp()
         self.get_keys()
         self.animate()
         # self.rot = (self.rot + self.rot_speed * self.game.dt) % 360 #TODO: probably not gonna rotate
@@ -189,15 +214,8 @@ class  Player(pg.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
-        if not self.walking:
-            if self.facing == 'back':
-                self.image = self.standing_frame_b
-            elif self.facing == 'forward':
-                self.image = self.standing_frame_f
-            elif self.facing == 'left':
-                self.image = self.standing_frame_l
-            elif self.facing == 'right':
-                self.image = self.standing_frame_r
+   
+      
 
     def animate(self):
         now = pg.time.get_ticks()
@@ -222,7 +240,25 @@ class  Player(pg.sprite.Sprite):
         #         #     self.image = self.walk_frames_l[self.current_frame]
         #         self.rect = self.image.get_rect()
         #         self.rect.bottom = bottom 
-        if self.walking:
+        if self.shooting:
+            if now - self.last_update > 100:
+                self.last_update = now
+                # self.walking = False
+                self.current_frame = (self.current_frame + 1) % len(self.shooting_pistol_frames_l)
+                bottom = self.rect.bottom
+                if self.facing == 'back':
+                    self.image = self.standing_frame_b
+                elif self.facing == 'forward':
+                    self.image = self.standing_frame_f
+                elif self.facing == 'left':
+                    self.image = self.shooting_pistol_frames_l[self.current_frame]
+                elif self.facing == 'right':
+                    self.image = self.shooting_pistol_frames_r[self.current_frame]
+                self.rect = self.image.get_rect()
+                self.rect.bottom = bottom
+            else:
+                self.shooting = False
+        elif self.walking:
             if now - self.last_update > 100:
                 self.last_update = now
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frames_b)
@@ -241,6 +277,18 @@ class  Player(pg.sprite.Sprite):
                     self.image = self.walk_frames_r[self.current_frame]
                 self.rect = self.image.get_rect()
                 self.rect.bottom = bottom
+        else:
+            if self.facing == 'back':
+                self.image = self.standing_frame_b
+            elif self.facing == 'forward':
+                self.image = self.standing_frame_f
+            elif self.facing == 'left':
+                self.image = self.standing_frame_l
+            elif self.facing == 'right':
+                self.image = self.standing_frame_r
+        
+        
+            
         # else: # TODO: MAYBE??
         #     bottom = self.rect.bottom
         #     self.last_update = now
@@ -339,6 +387,7 @@ class SkeletonMob(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.load_images()
+        self.facing = 'right'
         self.image = self.standing_frame_r.copy()
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -371,7 +420,10 @@ class SkeletonMob(pg.sprite.Sprite):
         pass # code to wander around
 
     def update(self):
-        self.image = self.standing_frame_r.copy()
+        if self.facing == 'right':
+            self.image = self.standing_frame_r.copy()
+        else:
+            self.image = self.standing_frame_l.copy()
         target_dist = self.target.pos - self.pos
         if target_dist.length_squared() < DETECT_RADIUS**2:
             if random() < 0.002:
@@ -382,6 +434,10 @@ class SkeletonMob(pg.sprite.Sprite):
             self.rect.center = self.pos # TODO: probably should comment out
             # self.acc = vec(1, 0).rotate(-self.rot)
             self.acc = target_dist.normalize()
+            if target_dist[0] > 0:
+                self.facing = 'right'
+            else:
+                self.facing = 'left'
             self.avoid_mobs()
             # print(self.acc)
             self.acc.scale_to_length(self.speed)
@@ -399,6 +455,7 @@ class SkeletonMob(pg.sprite.Sprite):
         if self.health <= 0:
             choice(self.game.skeleton_hit_sounds).play()
             self.kill()
+            self.game.player.exp += SKELETON_EXP
             self.game.map_img.blit(self.game.skeleton_parts, self.pos - vec(32, 32))
      
     def draw_health(self):
