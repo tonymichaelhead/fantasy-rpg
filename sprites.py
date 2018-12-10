@@ -143,6 +143,9 @@ class  Player(pg.sprite.Sprite):
                 self.walking = True
                 self.facing = 'back'
                 self.vel = vec(0, PLAYER_SPEED).rotate(-self.rot)
+        elif keys[pg.K_t]:
+            print('question')
+            self.talk()
         else:
             self.walking = False
         if keys[pg.K_1]:
@@ -199,6 +202,11 @@ class  Player(pg.sprite.Sprite):
                     snd.stop()
                 snd.play()
             MuzzleFlash(self.game, pos)
+
+    def talk(self):
+        hits = pg.sprite.spritecollide(self, self.game.npcs, False)
+        if hits:
+            print('talking to this mofo')
 
     def hit(self):
         self.damaged = True
@@ -490,7 +498,7 @@ class SkeletonMob(pg.sprite.Sprite):
 class Npc(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self._layer = MOB_LAYER
-        self.groups = game.all_sprites, game.npcs
+        self.groups = game.all_sprites, game.npcs, game.walls
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.load_images()

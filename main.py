@@ -197,6 +197,11 @@ class Game:
                 hit.kill()
                 self.effects_sounds['gun_pickup'].play()
                 self.player.weapon = 'shotgun'
+        # Player hits 
+        # Player hits exits
+        hits = pg.sprite.spritecollide(self.player, self.exits, False)
+        for hit in hits:
+            self.change_map(hit.map_file, hit.music_file, hit.spawn_player_x, hit.spawn_player_y)
         # Mob hits player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
@@ -217,11 +222,6 @@ class Game:
             for bullet in hits[mob]:
                 mob.health -= bullet.damage
             mob.vel = vec(0, 0)
-        # Player hits exits
-        hits = pg.sprite.spritecollide(self.player, self.exits, False)
-        for hit in hits:
-            self.change_map(hit.map_file, hit.music_file, hit.spawn_player_x, hit.spawn_player_y)
-
 
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
