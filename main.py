@@ -131,6 +131,7 @@ class Game:
         self.exits = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
         self.skeleton_mobs = pg.sprite.Group()
+        self.npcs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         self.items = pg.sprite.Group()
         self.map = TiledMap(path.join(self.map_folder, 'forest1.tmx'))
@@ -145,6 +146,8 @@ class Game:
                 Mob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'skeleton':
                 SkeletonMob(self, obj_center.x, obj_center.y)
+            if tile_object.name == 'npc':
+                Npc(self, obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)
@@ -307,6 +310,8 @@ class Game:
                 Mob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'skeleton':
                 SkeletonMob(self, obj_center.x, obj_center.y)
+            if tile_object.name == 'npc':
+                Npc(self, obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)

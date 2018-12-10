@@ -487,6 +487,41 @@ class SkeletonMob(pg.sprite.Sprite):
         if self.health < SKELETON_MOB_HEALTH:
             pg.draw.rect(self.image, col, self.health_bar)
 
+class Npc(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self._layer = MOB_LAYER
+        self.groups = game.all_sprites, game.npcs
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.load_images()
+        self.facing = 'right'
+        self.image = self.standing_frame_r.copy()
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.hit_rect = MOB_HIT_RECT.copy()
+        self.hit_rect.center = self.rect.center
+        self.pos = vec(x, y)
+        self.vel = vec(0, 0)
+        self.acc = (0, 0)
+        self.rect.center = self.pos
+        # self.rot = 0
+        # self.health = SKELETON_MOB_HEALTH
+        self.speed = choice(SKELETON_MOB_SPEEDS)
+        # self.target = game.player
+        self.mode = 'dormant'
+    
+    def load_images(self):
+        # Standing
+        self.standing_frame_r = self.game.mob_spritesheet.get_image(56, 155, 29, 35)
+        self.standing_frame_r = pg.transform.scale(self.standing_frame_r, (48, 57))
+        self.standing_frame_l = pg.transform.flip(self.standing_frame_r, True, False) 
+
+    def update(self):
+        if self.facing == 'right':
+            self.image = self.standing_frame_r.copy()
+        else:
+            self.image = self.standing_frame_l.copy()
+
 class Bullet(pg.sprite.Sprite):
     def __init__(self, game, pos, dir, damage):
         self._layer = BULLET_LAYER

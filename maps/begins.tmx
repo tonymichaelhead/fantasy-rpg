@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="135" height="90" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="20">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="135" height="90" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="21">
  <tileset firstgid="1" source="32scale2-town-grass.tsx"/>
  <tileset firstgid="10" source="32scale2-town.tsx"/>
  <tileset firstgid="406" source="32_forest.tsx"/>
@@ -505,5 +505,6 @@
     <property name="spawn_player_y" value="500"/>
    </properties>
   </object>
+  <object id="20" name="npc" x="895" y="2705" width="30" height="29"/>
  </objectgroup>
 </map>
