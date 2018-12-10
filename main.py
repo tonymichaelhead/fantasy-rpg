@@ -65,7 +65,7 @@ class Game:
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, 'img')
         snd_folder = path.join(game_folder, 'snd')
-        music_folder = path.join(game_folder, 'music')
+        self.music_folder = path.join(game_folder, 'music')
         # Load sprite sheets
         self.spritesheet = SpriteSheet(path.join(img_folder, PLAYER_SPRITESHEET))
         self.mob_spritesheet = SpriteSheet(path.join(img_folder, MOB_SPRITESHEET))
@@ -75,8 +75,6 @@ class Game:
         self.hud_font = path.join(img_folder, 'Impacted2.0.ttf')
         self.dim_screen = pg.Surface(self.screen.get_size()).convert_alpha()
         self.dim_screen.fill((0,0,0, 180))
-        # TODO: this will be deprecated by loading sheets in player class
-        # self.player_img = pg.image.load(path.join(img_folder, PLAYER_IMG)).convert_alpha()
         self.bullet_images = {}
         self.bullet_images['lg'] = pg.image.load(path.join(img_folder, BULLET_IMG)).convert_alpha()
         self.bullet_images['lg'] = pg.transform.scale(self.bullet_images['lg'], (10, 10))
@@ -100,7 +98,7 @@ class Game:
         self.light_mask = pg.transform.scale(self.light_mask, LIGHT_RADIUS)
         self.light_rect = self.light_mask.get_rect()
         # Sound loading
-        pg.mixer.music.load(path.join(music_folder, BG_MUSIC))
+        pg.mixer.music.load(path.join(self.music_folder, BG_MUSIC))
         self.effects_sounds = {}
         for type in EFFECTS_SOUNDS:
             self.effects_sounds[type] = pg.mixer.Sound(path.join(snd_folder, EFFECTS_SOUNDS[type]))
@@ -151,7 +149,7 @@ class Game:
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)
             if tile_object.name == 'exit':
-                Exit(self, tile_object.map_file, tile_object.spawn_player_x, 
+                Exit(self, tile_object.map_file, tile_object.music_file, tile_object.spawn_player_x, 
                      tile_object.spawn_player_y, tile_object.x, tile_object.y,
                      tile_object.width, tile_object.height)
             if tile_object.name in ['health', 'shotgun']:
@@ -219,7 +217,7 @@ class Game:
         # Player hits exits
         hits = pg.sprite.spritecollide(self.player, self.exits, False)
         for hit in hits:
-            self.change_map(hit.map_file, hit.spawn_player_x, hit.spawn_player_y)
+            self.change_map(hit.map_file, hit.music_file, hit.spawn_player_x, hit.spawn_player_y)
 
 
     def draw_grid(self):
@@ -286,7 +284,7 @@ class Game:
                 # if event.key == pg.K_u:
                 #     self.change_map('begins.tmx')
     
-    def change_map(self, map_file, spawn_player_x, spawn_player_y):
+    def change_map(self, map_file, music_file, spawn_player_x, spawn_player_y):
         # Load new map, pass current game state to change maps mid game
         self.all_sprites.empty()
         self.all_sprites.add(self.player)
@@ -313,7 +311,7 @@ class Game:
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)
             if tile_object.name == 'exit':
-                Exit(self, tile_object.map_file, tile_object.spawn_player_x, 
+                Exit(self, tile_object.map_file, tile_object.music_file, tile_object.spawn_player_x, 
                      tile_object.spawn_player_y, tile_object.x, tile_object.y,
                      tile_object.width, tile_object.height)
             if tile_object.name in ['health', 'shotgun']:
@@ -323,6 +321,10 @@ class Game:
         # self.effects_sounds['level_start'].play()
         self.paused = False
         self.night = False
+
+        # Kill old BGM and load new map music
+        pg.mixer.music.load(path.join(self.music_folder, music_file))
+        pg.mixer.music.play(loops=-1)
             
     def show_start_screen(self):
         # Game splash/start screen

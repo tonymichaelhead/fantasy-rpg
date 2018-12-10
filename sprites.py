@@ -536,7 +536,7 @@ class Obstacle(pg.sprite.Sprite):
         self.rect.y = y
 
 class Exit(pg.sprite.Sprite):
-    def __init__(self, game, map_file, spawn_player_x, spawn_player_y, x, y, w, h):
+    def __init__(self, game, map_file, music_file, spawn_player_x, spawn_player_y, x, y, w, h):
         self.groups = game.exits
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -546,6 +546,7 @@ class Exit(pg.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.map_file = map_file
+        self.music_file = music_file
         self.spawn_player_x = spawn_player_x
         self.spawn_player_y = spawn_player_y
         
