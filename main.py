@@ -78,6 +78,7 @@ class Game:
         self.spritesheet = SpriteSheet(path.join(img_folder, PLAYER_SPRITESHEET))
         self.mob_spritesheet = SpriteSheet(path.join(img_folder, MOB_SPRITESHEET))
         self.skeleton_parts_spritesheet = SpriteSheet(path.join(img_folder, SKELETON_PARTS_SPRITESHEET))
+        self.npc_spritesheet = SpriteSheet(path.join(img_folder, NPC_SPRITESHEET))
         self.map_folder = path.join(game_folder, 'maps')
         self.title_font = path.join(img_folder, 'ZOMBIE.TTF')
         self.hud_font = path.join(img_folder, 'Impacted2.0.ttf')
@@ -155,7 +156,7 @@ class Game:
             if tile_object.name == 'skeleton':
                 SkeletonMob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'npc':
-                Npc(self, obj_center.x, obj_center.y)
+                Npc(self, tile_object.npc_name, obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)
@@ -321,7 +322,7 @@ class Game:
             if tile_object.name == 'skeleton':
                 SkeletonMob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'npc':
-                Npc(self, obj_center.x, obj_center.y)
+                Npc(self, tile_object.npc_name, obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)

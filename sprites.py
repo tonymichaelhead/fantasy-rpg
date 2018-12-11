@@ -1,6 +1,7 @@
 import pygame as pg
 from random import random, uniform, choice, randint
 from settings import *
+from npc_data import *
 from tilemap import collide_hit_rect
 import pytweening as tween
 from itertools import chain
@@ -474,16 +475,17 @@ class SkeletonMob(pg.sprite.Sprite):
             pg.draw.rect(self.image, col, self.health_bar)
 
 class Npc(pg.sprite.Sprite):
-    def __init__(self, game, x, y):
+    def __init__(self, game, char_name, x, y):
         self._layer = MOB_LAYER
         self.groups = game.all_sprites, game.npcs, game.walls
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
+        self.char_name = char_name
         self.load_images()
-        self.dialogue_1 = ['Hey, I really wish you well on your quest.']
-        self.dialogue_2 = ['Stop talking to me.']
+        self.dialogue_1 = NPCS[char_name]['dialogue_1']
+        self.dialogue_2 = NPCS[char_name]['dialogue_2']
         self.talked_to = False
-        self.facing = 'right'
+        self.facing = 'back'
         self.image = self.standing_frame_r.copy()
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -501,12 +503,16 @@ class Npc(pg.sprite.Sprite):
     
     def load_images(self):
         # Standing
-        self.standing_frame_r = self.game.mob_spritesheet.get_image(56, 155, 29, 35)
+        self.standing_frame_b = self.game.npc_spritesheet.get_image(4, 98, 24, 30)
+        self.standing_frame_b = pg.transform.scale(self.standing_frame_b, (36, 48))
+        self.standing_frame_r = self.game.npc_spritesheet.get_image(56, 155, 29, 35)
         self.standing_frame_r = pg.transform.scale(self.standing_frame_r, (48, 57))
         self.standing_frame_l = pg.transform.flip(self.standing_frame_r, True, False) 
 
     def update(self):
-        if self.facing == 'right':
+        if self.facing == 'back':
+            self.image = self.standing_frame_b.copy()
+        elif self.facing == 'right':
             self.image = self.standing_frame_r.copy()
         else:
             self.image = self.standing_frame_l.copy()

@@ -1,0 +1,5 @@
+For battles - 
+
+Implement a system for executing special attacks, kind of like Street fighter.
+So holding down z puts your character into "combo" mode, then pressing a combo
+of the arrow keys and hitting the space (fire) button executes the special move.

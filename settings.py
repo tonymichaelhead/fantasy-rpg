@@ -28,7 +28,7 @@ WALL_IMG = 'tile_354.png'
 
 # Player settings
 PLAYER_HEALTH = 100
-PLAYER_SPEED = 300
+PLAYER_SPEED = 250
 PLAYER_ROT_SPEED = 250
 PLAYER_IMG = 'manBlue_gun.png'
 PLAYER_SPRITESHEET = 'test-hero.png'
@@ -76,6 +76,9 @@ DETECT_RADIUS = 500
 SKELETON_MOB_SPEEDS = [25, 50, 75, 100] 
 SKELETON_MOB_HEALTH = 40
 SKELETON_EXP = 10
+
+# NPC settings
+NPC_SPRITESHEET = '32-npc.png'
 
 # Effects
 MUZZLE_FLASHES = ['smoke_05.png', 'smoke_06.png', 'smoke_07.png', 'smoke_08.png']
