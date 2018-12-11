@@ -61,6 +61,14 @@ class Game:
             text_rect.center = (x, y)
         self.screen.blit(text_surface, text_rect)
 
+    def draw_dialogue(self, text):
+        dialogue_box = pg.Surface((WIDTH / 2, 100)).convert_alpha()
+        dialogue_box.fill((0,0,0, 180))
+        dialogue_rect = dialogue_box.get_rect()
+        dialogue_rect.center = (WIDTH / 2, HEIGHT / 2)
+        self.screen.blit(dialogue_box, dialogue_rect)
+        self.draw_text(text, self.title_font, 20, WHITE, WIDTH / 2, HEIGHT / 2, align="center")
+
     def load_data(self):
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, 'img')
@@ -282,6 +290,8 @@ class Game:
                     self.paused = not self.paused
                 if event.key == pg.K_n:
                     self.night = not self.night
+                if event.key == pg.K_RCTRL:
+                    self.player.talk()
                 # if event.key == pg.K_l:
                 #     self.change_map('forest1.tmx')
                 # if event.key == pg.K_u:

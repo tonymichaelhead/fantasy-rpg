@@ -152,11 +152,7 @@ class  Player(pg.sprite.Sprite):
         if keys[pg.K_SPACE]:
             self.shooting = True
             self.shoot()
-        for event in pg.event.get():
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_t:        
-                    print('question')
-                    self.talk()
+
 
     def calculateExp(self):
         if self.exp >= 100:
@@ -210,10 +206,15 @@ class  Player(pg.sprite.Sprite):
         if hits:
             if not hits[0].talked_to:
                 for line in hits[0].dialogue_1:
-                    print(line)
+                    self.game.draw_dialogue(line)
+                    pg.display.flip()
+                    self.game.wait_for_key()
+                hits[0].talked_to = True
             else:
-                for line in hits[1].dialogue_2:
-                    print(line)
+                for line in hits[0].dialogue_2:
+                    self.game.draw_dialogue(line)
+                    pg.display.flip()
+                    self.game.wait_for_key()
 
     def hit(self):
         self.damaged = True
@@ -221,7 +222,6 @@ class  Player(pg.sprite.Sprite):
 
     def update(self):
         self.calculateExp()
-        # self.events()
         self.get_keys()
         if self.shooting:
             now = pg.time.get_ticks() # Maybe move to a higher level of update() to share
@@ -257,23 +257,7 @@ class  Player(pg.sprite.Sprite):
         #     self.walking = True
         # else:
         #     self.walking = False
-        # Show walk animation
-        # if self.walking:
-        #     if now - self.last_update > 50:
-        #         self.last_update = now
-        #         self.current_frame = (self.current_frame + 1) % len(self.walk_frames_f)
-        #         bottom = self.rect.bottom
-        #         if self.vel.y > 0:
-        #             self.facing = 'back'
-        #             self.image = self.walk_frames_f[self.current_frame]
-        #         # if self.vel.x > 0:
-        #         #     self.facing = 'right'
-        #         #     self.image = self.walk_frames_r[self.current_frame]
-        #         # else:
-        #         #     self.facing = 'left'
-        #         #     self.image = self.walk_frames_l[self.current_frame]
-        #         self.rect = self.image.get_rect()
-        #         self.rect.bottom = bottom 
+        # Draw gun if shooting
         if self.shooting and now - self.last_shot < WEAPONS[self.weapon]['rate']:
             self.last_update = now
             # self.walking = False
@@ -289,8 +273,7 @@ class  Player(pg.sprite.Sprite):
                 self.image = self.shooting_pistol_frames_r[self.current_frame]
             self.rect = self.image.get_rect()
             self.rect.bottom = bottom
-            # else:
-            #     self.shooting = False
+        # Show walking animation    
         elif self.walking:
             if now - self.last_update > 100:
                 self.last_update = now
@@ -319,10 +302,7 @@ class  Player(pg.sprite.Sprite):
                 self.image = self.standing_frame_l
             elif self.facing == 'right':
                 self.image = self.standing_frame_r
-        
-    def events(self): # TODO: Move to get_keys()
-        pass
-            
+
         # else: # TODO: MAYBE??
         #     bottom = self.rect.bottom
         #     self.last_update = now
@@ -330,18 +310,7 @@ class  Player(pg.sprite.Sprite):
         #     self.rect = self.image.get_rect()
         #     self.rect.bottom = bottom
 
-        # # Show idle animation
-        # if not self.jumping and not self.walking:
-        #     if now - self.last_update > 350:
-        #         self.last_update = now
-        #         self.current_frame = (self.current_frame + 1) % len(self.standing_frames_r)
-        #         bottom = self.rect.bottom
-        #         if self.facing == 'right': 
-        #             self.image = self.standing_frames_r[self.current_frame]
-        #         else:    
-        #             self.image = self.standing_frames_l[self.current_frame]
-        #         self.rect = self.image.get_rect()
-        #         self.rect.bottom = bottom
+        # TODO: Possibly use for pixel collisions
         # self.mask = pg.mask.from_surface(self.image)
 
     def add_health(self, amount):
