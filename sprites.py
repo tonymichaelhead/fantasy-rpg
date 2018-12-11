@@ -143,9 +143,6 @@ class  Player(pg.sprite.Sprite):
                 self.walking = True
                 self.facing = 'back'
                 self.vel = vec(0, PLAYER_SPEED).rotate(-self.rot)
-        elif keys[pg.K_t]:
-            print('question')
-            self.talk()
         else:
             self.walking = False
         if keys[pg.K_1]:
@@ -155,6 +152,11 @@ class  Player(pg.sprite.Sprite):
         if keys[pg.K_SPACE]:
             self.shooting = True
             self.shoot()
+        for event in pg.event.get():
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_t:        
+                    print('question')
+                    self.talk()
 
     def calculateExp(self):
         if self.exp >= 100:
@@ -206,7 +208,12 @@ class  Player(pg.sprite.Sprite):
     def talk(self):
         hits = pg.sprite.spritecollide(self, self.game.npcs, False)
         if hits:
-            print('talking to this mofo')
+            if not hits[0].talked_to:
+                for line in hits[0].dialogue_1:
+                    print(line)
+            else:
+                for line in hits[1].dialogue_2:
+                    print(line)
 
     def hit(self):
         self.damaged = True
@@ -214,6 +221,7 @@ class  Player(pg.sprite.Sprite):
 
     def update(self):
         self.calculateExp()
+        # self.events()
         self.get_keys()
         if self.shooting:
             now = pg.time.get_ticks() # Maybe move to a higher level of update() to share
@@ -312,7 +320,8 @@ class  Player(pg.sprite.Sprite):
             elif self.facing == 'right':
                 self.image = self.standing_frame_r
         
-        
+    def events(self): # TODO: Move to get_keys()
+        pass
             
         # else: # TODO: MAYBE??
         #     bottom = self.rect.bottom
@@ -502,6 +511,9 @@ class Npc(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.load_images()
+        self.dialogue_1 = ['Hey, I really wish you well on your quest.']
+        self.dialogue_2 = ['Stop talking to me.']
+        self.talked_to = False
         self.facing = 'right'
         self.image = self.standing_frame_r.copy()
         self.rect = self.image.get_rect()
@@ -593,7 +605,6 @@ class Exit(pg.sprite.Sprite):
         self.spawn_player_x = spawn_player_x
         self.spawn_player_y = spawn_player_y
         
-
 class MuzzleFlash(pg.sprite.Sprite):
     def __init__(self, game, pos):
         self._layer = EFFECTS_LAYER
