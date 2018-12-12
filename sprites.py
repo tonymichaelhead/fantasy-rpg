@@ -519,12 +519,7 @@ class Npc(pg.sprite.Sprite):
                                                                     self.char_data['standing_frame_l']['w'], 
                                                                     self.char_data['standing_frame_l']['h'])
         self.standing_frame_l = pg.transform.scale(self.standing_frame_l, self.char_data['standing_frame_l']['scale'])
-
-        self.standing_frame_r = pg.transform.flip(self.standing_frame_l, True, False) 
-
-        
-
-        # self.standing_frame_l = pg.transform.flip(self.standing_frame_r, True, False) 
+        self.standing_frame_r = pg.transform.flip(self.standing_frame_l, True, False)
 
     def update(self):
         if self.facing == 'back':
