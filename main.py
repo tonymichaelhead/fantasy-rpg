@@ -322,7 +322,7 @@ class Game:
             if tile_object.name == 'skeleton':
                 SkeletonMob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'npc':
-                Npc(self, tile_object.npc_name, obj_center.x, obj_center.y)
+                Npc(self, tile_object.npc_name, tile_object.facing, obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)

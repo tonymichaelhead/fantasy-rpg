@@ -475,7 +475,7 @@ class SkeletonMob(pg.sprite.Sprite):
             pg.draw.rect(self.image, col, self.health_bar)
 
 class Npc(pg.sprite.Sprite):
-    def __init__(self, game, char_name, x, y):
+    def __init__(self, game, char_name, facing, x, y):
         self._layer = MOB_LAYER
         self.groups = game.all_sprites, game.npcs, game.walls
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -486,7 +486,7 @@ class Npc(pg.sprite.Sprite):
         self.dialogue_1 = NPCS[char_name]['dialogue_1']
         self.dialogue_2 = NPCS[char_name]['dialogue_2']
         self.talked_to = False
-        self.facing = 'left'
+        self.facing = facing
         self.image = self.standing_frame_l.copy()
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)

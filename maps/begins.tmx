@@ -507,26 +507,31 @@
   </object>
   <object id="20" name="npc" x="895" y="2705" width="30" height="29">
    <properties>
+    <property name="facing" value="right"/>
     <property name="npc_name" value="old_man_world_entrance"/>
    </properties>
   </object>
   <object id="21" name="npc" x="4087" y="305" width="30" height="29">
    <properties>
+    <property name="facing" value="right"/>
     <property name="npc_name" value="mountain_entrance_boy"/>
    </properties>
   </object>
   <object id="22" name="npc" x="4176" y="349" width="30" height="29">
    <properties>
+    <property name="facing" value="left"/>
     <property name="npc_name" value="old_man_world_entrance"/>
    </properties>
   </object>
   <object id="23" name="npc" x="3964" y="114" width="30" height="29">
    <properties>
+    <property name="facing" value="back"/>
     <property name="npc_name" value="girl_home"/>
    </properties>
   </object>
   <object id="24" name="npc" x="3694" y="92" width="30" height="29">
    <properties>
+    <property name="facing" value="forward"/>
     <property name="npc_name" value="princess"/>
    </properties>
   </object>
