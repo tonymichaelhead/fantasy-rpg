@@ -481,12 +481,13 @@ class Npc(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.char_name = char_name
+        self.char_data = NPCS[char_name]
         self.load_images()
         self.dialogue_1 = NPCS[char_name]['dialogue_1']
         self.dialogue_2 = NPCS[char_name]['dialogue_2']
         self.talked_to = False
-        self.facing = 'back'
-        self.image = self.standing_frame_r.copy()
+        self.facing = 'left'
+        self.image = self.standing_frame_l.copy()
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.hit_rect = MOB_HIT_RECT.copy()
@@ -503,19 +504,37 @@ class Npc(pg.sprite.Sprite):
     
     def load_images(self):
         # Standing
-        self.standing_frame_b = self.game.npc_spritesheet.get_image(4, 98, 24, 30)
-        self.standing_frame_b = pg.transform.scale(self.standing_frame_b, (36, 48))
-        self.standing_frame_r = self.game.npc_spritesheet.get_image(56, 155, 29, 35)
-        self.standing_frame_r = pg.transform.scale(self.standing_frame_r, (48, 57))
-        self.standing_frame_l = pg.transform.flip(self.standing_frame_r, True, False) 
+        self.standing_frame_b = self.game.npc_spritesheet.get_image(self.char_data['standing_frame_b']['x'], 
+                                                                    self.char_data['standing_frame_b']['y'], 
+                                                                    self.char_data['standing_frame_b']['w'], 
+                                                                    self.char_data['standing_frame_b']['h'])
+        self.standing_frame_b = pg.transform.scale(self.standing_frame_b, self.char_data['standing_frame_b']['scale'])
+        self.standing_frame_f = self.game.npc_spritesheet.get_image(self.char_data['standing_frame_f']['x'], 
+                                                                    self.char_data['standing_frame_f']['y'], 
+                                                                    self.char_data['standing_frame_f']['w'], 
+                                                                    self.char_data['standing_frame_f']['h'])
+        self.standing_frame_f = pg.transform.scale(self.standing_frame_f, self.char_data['standing_frame_f']['scale'])
+        self.standing_frame_l = self.game.npc_spritesheet.get_image(self.char_data['standing_frame_l']['x'], 
+                                                                    self.char_data['standing_frame_l']['y'], 
+                                                                    self.char_data['standing_frame_l']['w'], 
+                                                                    self.char_data['standing_frame_l']['h'])
+        self.standing_frame_l = pg.transform.scale(self.standing_frame_l, self.char_data['standing_frame_l']['scale'])
+
+        self.standing_frame_r = pg.transform.flip(self.standing_frame_l, True, False) 
+
+        
+
+        # self.standing_frame_l = pg.transform.flip(self.standing_frame_r, True, False) 
 
     def update(self):
         if self.facing == 'back':
             self.image = self.standing_frame_b.copy()
-        elif self.facing == 'right':
-            self.image = self.standing_frame_r.copy()
-        else:
+        elif self.facing == 'forward':
+            self.image = self.standing_frame_f.copy()
+        elif self.facing == 'left':
             self.image = self.standing_frame_l.copy()
+        else:
+            self.image = self.standing_frame_r.copy()
 
 class Bullet(pg.sprite.Sprite):
     def __init__(self, game, pos, dir, damage):
