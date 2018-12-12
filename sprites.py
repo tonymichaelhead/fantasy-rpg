@@ -486,7 +486,7 @@ class Npc(pg.sprite.Sprite):
         self.dialogue_1 = NPCS[char_name]['dialogue_1']
         self.dialogue_2 = NPCS[char_name]['dialogue_2']
         self.talked_to = False
-        self.facing = 'right'
+        self.facing = 'left'
         self.image = self.standing_frame_l.copy()
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)

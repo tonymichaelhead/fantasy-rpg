@@ -11,13 +11,20 @@ OLD_MAN_WORLD_ENTRANCE = {'dialogue_1': ["There are many fun tales to be had out
                           'standing_frame_f': {'x': 70, 'y': 2, 'w': 20, 'h': 30, 'scale': (36, 48)},
                           'standing_frame_l': {'x': 38, 'y': 2, 'w': 22, 'h': 30, 'scale': (36, 48)} }
 
-GIRL_HOME =            {'dialogue_1': ["Help, help! You must retreive my necklace that was stolen."],
+GIRL_HOME             = {'dialogue_1': ["Help, help! You must retreive my necklace that was stolen."],
                         'dialogue_2': ["You must be very careful, there are lots of monsters out there!."],
                         'standing_frame_b': {'x': 4, 'y': 64, 'w': 24, 'h': 32, 'scale': (36, 48)},
-                        'standing_frame_f': {'x': 38, 'y': 2, 'w': 24, 'h': 32, 'scale': (36, 48)}, 
+                        'standing_frame_f': {'x': 68, 'y': 64, 'w': 24, 'h': 32, 'scale': (36, 48)}, 
                         'standing_frame_l': {'x': 38, 'y': 64, 'w': 20, 'h': 30, 'scale': (36, 48)}}
+
+PRINCESS             = {'dialogue_1': ["Yo, I'm the princess."],
+                        'dialogue_2': ["I'm srs m8."],
+                        'standing_frame_b': {'x': 6, 'y': 32, 'w': 20, 'h': 32, 'scale': (36, 48)},
+                        'standing_frame_f': {'x': 70, 'y': 32, 'w': 20, 'h': 32, 'scale': (36, 48)}, 
+                        'standing_frame_l': {'x': 38, 'y': 32, 'w': 22, 'h': 32, 'scale': (36, 48)}}
 
 # NPC Dictionary
 NPCS = {'mountain_entrance_boy': MOUNTAIN_ENTRANCE_BOY,
         'old_man_world_entrance': OLD_MAN_WORLD_ENTRANCE,
-        'girl_home': GIRL_HOME}
+        'girl_home': GIRL_HOME,
+        'princess': PRINCESS,}
