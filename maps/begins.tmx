@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="135" height="90" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="27">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="135" height="90" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="28">
  <tileset firstgid="1" source="32scale2-town-grass.tsx"/>
  <tileset firstgid="10" source="32scale2-town.tsx"/>
  <tileset firstgid="406" source="32_forest.tsx"/>
@@ -531,6 +531,13 @@
     <property name="facing" value="back"/>
     <property name="mode" value="posting"/>
     <property name="npc_name" value="princess"/>
+   </properties>
+  </object>
+  <object id="27" name="npc" x="4102" y="264" width="30" height="29">
+   <properties>
+    <property name="facing" value="forward"/>
+    <property name="mode" value="wandering"/>
+    <property name="npc_name" value="mountain_entrance_boy"/>
    </properties>
   </object>
  </objectgroup>

@@ -539,36 +539,38 @@ class Npc(pg.sprite.Sprite):
         else:
             self.image = self.standing_frame_r.copy()
         
-    def wander(self): 
-        if self.facing == 'back':
-            vel = next(self.gate)
-            if vel > 0:
-                self.image = self.standing_frame_b.copy()
+    def wander(self):
+        hits = pg.sprite.spritecollide(self.game.player, self.game.npcs, False)
+        if not hits:    
+            if self.facing == 'back':
+                vel = next(self.gate)
+                if vel > 0:
+                    self.image = self.standing_frame_b.copy()
+                else:
+                    self.image = self.standing_frame_f.copy()
+                print(vel)
+                self.pos.y += vel
+            elif self.facing == 'forward':
+                vel = next(self.gate)
+                if vel > 0:
+                    self.image = self.standing_frame_f.copy()
+                else:
+                    self.image = self.standing_frame_b.copy()
+                self.pos.y -= vel
+            elif self.facing == 'left':
+                vel = next(self.gate)
+                if vel > 0:
+                    self.image = self.standing_frame_l.copy()
+                else:
+                    self.image = self.standing_frame_r.copy()
+                self.pos.x -= vel
             else:
-                self.image = self.standing_frame_f.copy()
-            print(vel)
-            self.pos.y += vel
-        elif self.facing == 'forward':
-            vel = next(self.gate)
-            if vel > 0:
-                self.image = self.standing_frame_f.copy()
-            else:
-                self.image = self.standing_frame_b.copy()
-            self.pos.y -= vel
-        elif self.facing == 'left':
-            vel = next(self.gate)
-            if vel > 0:
-                self.image = self.standing_frame_l.copy()
-            else:
-                self.image = self.standing_frame_r.copy()
-            self.pos.x -= vel
-        else:
-            vel = next(self.gate)
-            if vel > 0:
-                self.image = self.standing_frame_r.copy()
-            else:
-                self.image = self.standing_frame_l.copy()
-            self.pos.x += vel
+                vel = next(self.gate)
+                if vel > 0:
+                    self.image = self.standing_frame_r.copy()
+                else:
+                    self.image = self.standing_frame_l.copy()
+                self.pos.x += vel
         self.rect.center = self.pos
 
 class Bullet(pg.sprite.Sprite):
