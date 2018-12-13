@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="npc" width="30" height="29">
+  <properties>
+   <property name="facing" value="forward"/>
+   <property name="npc_name" value="princess"/>
+  </properties>
+ </object>
+</template>

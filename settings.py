@@ -79,7 +79,7 @@ SKELETON_EXP = 10
 
 # NPC settings
 NPC_SPRITESHEET = '32-npc.png'
-NPC_GATE = [1 for i in range(0, 100, 1)] + [-1 for i in range(0, 100, 1)]
+NPC_GATE = [0.5 for i in range(0, 200, 1)] + [-0.5 for i in range(0, 200, 1)]
 
 # Effects
 MUZZLE_FLASHES = ['smoke_05.png', 'smoke_06.png', 'smoke_07.png', 'smoke_08.png']

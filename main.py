@@ -67,7 +67,7 @@ class Game:
         dialogue_rect = dialogue_box.get_rect()
         dialogue_rect.center = (WIDTH / 2, HEIGHT / 2)
         self.screen.blit(dialogue_box, dialogue_rect)
-        self.draw_text(text, self.title_font, 20, WHITE, WIDTH / 2, HEIGHT / 2, align="center")
+        self.draw_text(text, self.hud_font, 20, WHITE, WIDTH / 2, HEIGHT / 2, align="center")
 
     def load_data(self):
         game_folder = path.dirname(__file__)
@@ -156,7 +156,7 @@ class Game:
             if tile_object.name == 'skeleton':
                 SkeletonMob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'npc':
-                Npc(self, tile_object.npc_name, obj_center.x, obj_center.y)
+                Npc(self, tile_object.npc_name, tile_object.mode, obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)
@@ -322,7 +322,7 @@ class Game:
             if tile_object.name == 'skeleton':
                 SkeletonMob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'npc':
-                Npc(self, tile_object.npc_name, tile_object.facing, obj_center.x, obj_center.y)
+                Npc(self, tile_object.npc_name, tile_object.mode, tile_object.facing, obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)

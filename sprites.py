@@ -475,7 +475,7 @@ class SkeletonMob(pg.sprite.Sprite):
             pg.draw.rect(self.image, col, self.health_bar)
 
 class Npc(pg.sprite.Sprite):
-    def __init__(self, game, char_name, facing, x, y):
+    def __init__(self, game, char_name, mode, facing, x, y):
         self._layer = MOB_LAYER
         self.groups = game.all_sprites, game.npcs, game.walls
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -487,7 +487,7 @@ class Npc(pg.sprite.Sprite):
         self.dialogue_2 = NPCS[char_name]['dialogue_2']
         self.talked_to = False
         self.facing = facing
-        self.mode = 'wandering'
+        self.mode = mode
         self.gate = cycle(chain(NPC_GATE))
         self.image = self.standing_frame_l.copy()
         self.rect = self.image.get_rect()
@@ -524,17 +524,20 @@ class Npc(pg.sprite.Sprite):
 
     def update(self):
         if self.mode == 'wandering':
-            # print('wander!')
             self.wander()
         else:
-            if self.facing == 'back':
-                self.image = self.standing_frame_b.copy()
-            elif self.facing == 'forward':
-                self.image = self.standing_frame_f.copy()
-            elif self.facing == 'left':
-                self.image = self.standing_frame_l.copy()
-            else:
-                self.image = self.standing_frame_r.copy()
+            self.post()
+
+    def post(self):
+        # Animation for standing
+        if self.facing == 'back':
+            self.image = self.standing_frame_b.copy()
+        elif self.facing == 'forward':
+            self.image = self.standing_frame_f.copy()
+        elif self.facing == 'left':
+            self.image = self.standing_frame_l.copy()
+        else:
+            self.image = self.standing_frame_r.copy()
         
     def wander(self): 
         if self.facing == 'back':
@@ -567,10 +570,6 @@ class Npc(pg.sprite.Sprite):
                 self.image = self.standing_frame_l.copy()
             self.pos.x += vel
         self.rect.center = self.pos
-        # print('moved: {}'.format(self.pos.x))    
-     
-            # self.wandering = False
-        
 
 class Bullet(pg.sprite.Sprite):
     def __init__(self, game, pos, dir, damage):
