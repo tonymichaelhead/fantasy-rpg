@@ -4,7 +4,7 @@ from settings import *
 from npc_data import *
 from tilemap import collide_hit_rect
 import pytweening as tween
-from itertools import chain
+from itertools import chain, cycle
 vec = pg.math.Vector2
 
 def collide_with_walls(sprite, group, dir):
@@ -487,6 +487,8 @@ class Npc(pg.sprite.Sprite):
         self.dialogue_2 = NPCS[char_name]['dialogue_2']
         self.talked_to = False
         self.facing = facing
+        self.mode = 'wandering'
+        self.gate = cycle(chain(NPC_GATE))
         self.image = self.standing_frame_l.copy()
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -500,7 +502,6 @@ class Npc(pg.sprite.Sprite):
         # self.health = SKELETON_MOB_HEALTH
         self.speed = choice(SKELETON_MOB_SPEEDS)
         # self.target = game.player
-        self.mode = 'dormant'
     
     def load_images(self):
         # Standing
@@ -522,14 +523,54 @@ class Npc(pg.sprite.Sprite):
         self.standing_frame_r = pg.transform.flip(self.standing_frame_l, True, False)
 
     def update(self):
-        if self.facing == 'back':
-            self.image = self.standing_frame_b.copy()
-        elif self.facing == 'forward':
-            self.image = self.standing_frame_f.copy()
-        elif self.facing == 'left':
-            self.image = self.standing_frame_l.copy()
+        if self.mode == 'wandering':
+            # print('wander!')
+            self.wander()
         else:
-            self.image = self.standing_frame_r.copy()
+            if self.facing == 'back':
+                self.image = self.standing_frame_b.copy()
+            elif self.facing == 'forward':
+                self.image = self.standing_frame_f.copy()
+            elif self.facing == 'left':
+                self.image = self.standing_frame_l.copy()
+            else:
+                self.image = self.standing_frame_r.copy()
+        
+    def wander(self): 
+        if self.facing == 'back':
+            vel = next(self.gate)
+            if vel > 0:
+                self.image = self.standing_frame_b.copy()
+            else:
+                self.image = self.standing_frame_f.copy()
+            print(vel)
+            self.pos.y += vel
+        elif self.facing == 'forward':
+            vel = next(self.gate)
+            if vel > 0:
+                self.image = self.standing_frame_f.copy()
+            else:
+                self.image = self.standing_frame_b.copy()
+            self.pos.y -= vel
+        elif self.facing == 'left':
+            vel = next(self.gate)
+            if vel > 0:
+                self.image = self.standing_frame_l.copy()
+            else:
+                self.image = self.standing_frame_r.copy()
+            self.pos.x -= vel
+        else:
+            vel = next(self.gate)
+            if vel > 0:
+                self.image = self.standing_frame_r.copy()
+            else:
+                self.image = self.standing_frame_l.copy()
+            self.pos.x += vel
+        self.rect.center = self.pos
+        # print('moved: {}'.format(self.pos.x))    
+     
+            # self.wandering = False
+        
 
 class Bullet(pg.sprite.Sprite):
     def __init__(self, game, pos, dir, damage):
