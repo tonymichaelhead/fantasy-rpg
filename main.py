@@ -291,7 +291,7 @@ class Game:
                     self.paused = not self.paused
                 if event.key == pg.K_n:
                     self.night = not self.night
-                if event.key == pg.K_RCTRL:
+                if event.key == pg.K_RCTRL or event.key ==pg.K_LCTRL:
                     self.player.talk()
                 # if event.key == pg.K_l:
                 #     self.change_map('forest1.tmx')

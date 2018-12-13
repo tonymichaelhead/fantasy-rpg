@@ -540,8 +540,8 @@ class Npc(pg.sprite.Sprite):
             self.image = self.standing_frame_r.copy()
         
     def wander(self):
-        hits = pg.sprite.spritecollide(self.game.player, self.game.npcs, False)
-        if not hits:    
+        hit = pg.sprite.collide_rect(self, self.game.player)
+        if not hit:    
             if self.facing == 'back':
                 vel = next(self.gate)
                 if vel > 0:
