@@ -120,6 +120,9 @@ class  Player(pg.sprite.Sprite):
         self.attacking_frames_l = []
         for frame in self.raw_attacking_frames_l:
             self.attacking_frames_l.append(pg.transform.scale(frame, (36, 48)))
+        self.attacking_frames_r = []
+        for frame in self.attacking_frames_l:
+            self.attacking_frames_r.append(pg.transform.flip(frame, True, False))
         # # Jumping
         # self.jump_frame_r = self.game.spritesheet.get_image(100, 184, 72, 68)
         # self.jump_frame_l = pg.transform.flip(self.jump_frame_r, True, False)
@@ -161,7 +164,6 @@ class  Player(pg.sprite.Sprite):
             self.shooting = True
             self.shoot()
         if keys[pg.K_x]:
-            self.attacking = True
             self.attack()
 
 
@@ -175,26 +177,32 @@ class  Player(pg.sprite.Sprite):
             self.exp = 0 + remainder
     
     def attack(self):
+        if not self.attacking:
+            self.attacking = True
+            self.attack_lunge = chain(ATTACK_LUNGE)
         print('attack!')
         now = pg.time.get_ticks()
         # Add attack rate to settings
-        if now - self.last_attack > 10:
+        if now - self.last_attack > ATTACK_FREQUENCY:
             self.last_attack = now
             self.recovering = True
             self.recovering_start = now
             # Determine direction and kickback
-            if self.facing == 'left':
-                dir = vec(-1, 0)
-                self.vel += dir * 10
-            elif self.facing == 'right':
-                dir = vec(1, 0)
-                self.vel = dir * 10
-            elif self.facing == 'forward':
-                dir = vec(0, -1)
-                self.vel = dir * 10
-            elif self.facing == 'back':
-                dir = vec(0, 1)
-                self.vel = dir * 10
+            # if self.facing == 'left':
+            #     try:
+            #         vel = next(self.attack_lunge)
+            #         self.pos.x -= vel
+            #     except:
+            #         pass
+            # elif self.facing == 'right':
+            #     vel = next(self.attack_lunge)
+                
+            # elif self.facing == 'forward':
+            #     vel = next(self.attack_lunge)
+                
+            # elif self.facing == 'back':
+            #     vel = next(self.attack_lunge)
+                
             # self.pos += self.vel * self.game.dt
             # self.rect = self.image.get_rect()
             # self.rect.center = self.pos
@@ -281,8 +289,28 @@ class  Player(pg.sprite.Sprite):
         self.get_keys()
         if self.attacking:
             now = pg.time.get_ticks() # Maybe move to a higher level of update() to share
-            if now - self.recovering_start > 10:
-                self.shooting = False
+            if now - self.recovering_start > ATTACK_FREQUENCY: # TODO: change to frequency?
+                self.attacking = False
+            else: 
+                if self.facing == 'left':
+                    try:
+                        vel = next(self.attack_lunge)
+                        self.pos.x -= vel
+                    except:
+                        pass
+                elif self.facing == 'right':
+                    try:
+                        vel = next(self.attack_lunge)
+                        self.pos.x += vel
+                    except:
+                        pass
+                elif self.facing == 'forward':
+                    vel = next(self.attack_lunge)
+                    
+                elif self.facing == 'back':
+                    vel = next(self.attack_lunge)
+            
+   
         if self.shooting:
             now = pg.time.get_ticks() # Maybe move to a higher level of update() to share
             if now - self.last_shot > WEAPONS[self.weapon]['rate']:
@@ -334,7 +362,7 @@ class  Player(pg.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.bottom = bottom
         # Show attacking animation
-        elif self.attacking and now - self.last_attack < 10: # TODO: make this a constant
+        elif self.attacking and now - self.last_attack < 400: # TODO: make this a constant
             self.last_update = now
             # self.walking = False
             self.current_frame = (self.current_frame + 1) % len(self.attacking_frames_l)
@@ -348,7 +376,7 @@ class  Player(pg.sprite.Sprite):
             elif self.facing == 'left':
                 self.image = self.attacking_frames_l[self.current_frame]
             elif self.facing == 'right':
-                pass
+                self.image = self.attacking_frames_r[self.current_frame]
                 # self.image = self.attacking_frames_r[self.current_frame]
             self.rect = self.image.get_rect()
             self.rect.bottom = bottom
@@ -626,7 +654,6 @@ class Npc(pg.sprite.Sprite):
                     self.image = self.standing_frame_b.copy()
                 else:
                     self.image = self.standing_frame_f.copy()
-                print(vel)
                 self.pos.y += vel
             elif self.facing == 'forward':
                 vel = next(self.gate)
