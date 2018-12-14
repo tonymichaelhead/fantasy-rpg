@@ -214,20 +214,26 @@ class Game:
         # Mob hits player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
+            now = pg.time.get_ticks()
             if self.player.attacking:
-                hit.health -= 10 # TODO: Put in constant
-            else:
-                if random() < 0.7:
-                    choice(self.player_hit_sounds).play()
-                self.player.health -= MOB_DAMAGE
+                self.player.attack_buffer_start = now            
+                hit.health -= ATTACK_DAMAGE
                 hit.vel = vec(0, 0)
-                if self.player.health <= 0:
-                    self.playing = False
+            else:
+                if now - self.player.attack_buffer_start > ATTACK_BUFFER:
+                    self.player.attack_buffer_start = 0
+                    if random() < 0.7:
+                        choice(self.player_hit_sounds).play()
+                    self.player.health -= MOB_DAMAGE
+                    hit.vel = vec(0, 0)
+                    if self.player.health <= 0:
+                        self.playing = False
         if hits:
-            self.player.hit()
-            target_dist = self.player.pos - hit.pos
-            self.player.acc = target_dist.normalize()
-            self.player.pos += (self.player.acc.x * MOB_KNOCKBACK, self.player.acc.y * MOB_KNOCKBACK)
+            if not self.player.attacking:
+                self.player.hit()
+                target_dist = self.player.pos - hit.pos
+                self.player.acc = target_dist.normalize()
+                self.player.pos += (self.player.acc.x * MOB_KNOCKBACK, self.player.acc.y * MOB_KNOCKBACK)
         # Bullets hit mobs
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         for mob in hits:
@@ -296,6 +302,8 @@ class Game:
                     self.night = not self.night
                 if event.key == pg.K_RCTRL or event.key ==pg.K_LCTRL:
                     self.player.talk()
+                if event.key == pg.K_x:
+                    self.player.attack()
                 # if event.key == pg.K_l:
                 #     self.change_map('forest1.tmx')
                 # if event.key == pg.K_u:

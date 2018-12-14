@@ -29,9 +29,11 @@ WALL_IMG = 'tile_354.png'
 # Player settings
 PLAYER_HEALTH = 100
 PLAYER_SPEED = 250
-ATTACK_FREQUENCY = 1000
-ATTACK_RECOVERY = 10
-ATTACK_LUNGE = [10 for i in range(0, 10, 1)] + [-10 for i in range(0, 10, 1)]
+ATTACK_FREQUENCY = 100
+ATTACK_DAMAGE = 5
+ATTACK_RECOVERY = 0
+ATTACK_BUFFER = 200 # After attacking, gives some 
+ATTACK_LUNGE = [5 for i in range(0, 5, 1)] + [-5 for i in range(0, 5, 1)]
 PLAYER_ROT_SPEED = 250
 PLAYER_IMG = 'manBlue_gun.png'
 PLAYER_SPRITESHEET = 'test-hero.png'

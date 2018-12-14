@@ -68,6 +68,7 @@ class  Player(pg.sprite.Sprite):
         self.last_shot = 0
         self.last_attack = 0
         self.last_recovering = 0
+        self.attack_buffer_start = 0
         self.health = PLAYER_HEALTH
         self.weapon = 'pistol'
         self.damaged = False
@@ -163,9 +164,6 @@ class  Player(pg.sprite.Sprite):
         if keys[pg.K_SPACE]:
             self.shooting = True
             self.shoot()
-        if keys[pg.K_x]:
-            self.attack()
-
 
     def calculateExp(self):
         if self.exp >= 100:
@@ -305,12 +303,18 @@ class  Player(pg.sprite.Sprite):
                     except:
                         pass
                 elif self.facing == 'forward':
-                    vel = next(self.attack_lunge)
+                    try:
+                        vel = next(self.attack_lunge)
+                        self.pos.y -= vel
+                    except:
+                        pass
                     
                 elif self.facing == 'back':
-                    vel = next(self.attack_lunge)
-            
-   
+                    try:
+                        vel = next(self.attack_lunge)
+                        self.pos.y += vel
+                    except:
+                        pass
         if self.shooting:
             now = pg.time.get_ticks() # Maybe move to a higher level of update() to share
             if now - self.last_shot > WEAPONS[self.weapon]['rate']:
@@ -362,7 +366,7 @@ class  Player(pg.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.bottom = bottom
         # Show attacking animation
-        elif self.attacking and now - self.last_attack < 400: # TODO: make this a constant
+        elif self.attacking and now - self.last_attack < ATTACK_FREQUENCY: # TODO: make this a constant
             self.last_update = now
             # self.walking = False
             self.current_frame = (self.current_frame + 1) % len(self.attacking_frames_l)
