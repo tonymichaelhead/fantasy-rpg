@@ -214,12 +214,15 @@ class Game:
         # Mob hits player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
-            if random() < 0.7:
-                choice(self.player_hit_sounds).play()
-            self.player.health -= MOB_DAMAGE
-            hit.vel = vec(0, 0)
-            if self.player.health <= 0:
-                self.playing = False
+            if self.player.attacking:
+                hit.health -= 10 # TODO: Put in constant
+            else:
+                if random() < 0.7:
+                    choice(self.player_hit_sounds).play()
+                self.player.health -= MOB_DAMAGE
+                hit.vel = vec(0, 0)
+                if self.player.health <= 0:
+                    self.playing = False
         if hits:
             self.player.hit()
             target_dist = self.player.pos - hit.pos
