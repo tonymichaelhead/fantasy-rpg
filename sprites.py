@@ -48,6 +48,7 @@ class  Player(pg.sprite.Sprite):
         self.game = game
         self.walking = False
         self.shooting = False
+        self.attacking = False
         self.recovering = False
         self.facing = 'back'
         self.current_frame = 0
@@ -65,6 +66,7 @@ class  Player(pg.sprite.Sprite):
         self.level = 1
         self.exp = 0
         self.last_shot = 0
+        self.last_attack = 0
         self.last_recovering = 0
         self.health = PLAYER_HEALTH
         self.weapon = 'pistol'
@@ -153,6 +155,9 @@ class  Player(pg.sprite.Sprite):
         if keys[pg.K_SPACE]:
             self.shooting = True
             self.shoot()
+        if keys[pg.K_x]:
+            self.attacking = True
+            self.attack()
 
 
     def calculateExp(self):
@@ -163,6 +168,51 @@ class  Player(pg.sprite.Sprite):
                 remainder = 0
             self.level += 1
             self.exp = 0 + remainder
+    
+    def attack(self):
+        print('attack!')
+        now = pg.time.get_ticks()
+        # Add attack rate to settings
+        if now - self.last_attack > 1000:
+            self.last_attack = now
+            self.recovering = True
+            self.recovering_start = now
+            # Determine direction and kickback
+            if self.facing == 'left':
+                dir = vec(-1, 0)
+                self.vel += dir * 10
+            elif self.facing == 'right':
+                dir = vec(1, 0)
+                self.vel = dir * 10
+            elif self.facing == 'forward':
+                dir = vec(0, -1)
+                self.vel = dir * 10
+            elif self.facing == 'back':
+                dir = vec(0, 1)
+                self.vel = dir * 10
+            # self.pos += self.vel * self.game.dt
+            # self.rect = self.image.get_rect()
+            # self.rect.center = self.pos
+            # self.pos += self.vel * self.game.dt
+            # self.hit_rect.centerx = self.pos.x
+            # Barrel Offset
+            # if self.facing == 'right':
+            #     pos = self.pos + BARREL_OFFSET_r
+            # if self.facing == 'left':
+            #     pos = self.pos + BARREL_OFFSET_l
+            # if self.facing == 'forward':
+            #     pos = self.pos + BARREL_OFFSET_f
+            # if self.facing == 'back':
+            #     pos = self.pos + BARREL_OFFSET_b
+            # for i in range(WEAPONS[self.weapon]['bullet_count']):
+            #     spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
+            #     Bullet(self.game, pos, dir.rotate(spread), WEAPONS[self.weapon]['damage'])
+            #     choice(self.game.weapon_sounds[self.weapon]).play()
+            #     snd = choice(self.game.weapon_sounds[self.weapon])
+            #     if snd.get_num_channels() > 2:
+            #         snd.stop()
+            #     snd.play()
+            # MuzzleFlash(self.game, pos)
             
     def shoot(self):
         now = pg.time.get_ticks()
@@ -242,9 +292,11 @@ class  Player(pg.sprite.Sprite):
                 self.image.fill((255, 255, 255, next(self.damage_alpha)), special_flags=pg.BLEND_RGBA_MULT)
             except:
                 self.damaged = False
-             
-        self.rect = self.image.get_rect()
-        self.rect.center = self.pos
+        if self.attacking:     
+            pass
+        else:
+            self.rect = self.image.get_rect()
+            self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.walls, 'x')
