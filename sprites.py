@@ -115,6 +115,11 @@ class  Player(pg.sprite.Sprite):
         self.shooting_pistol_frames_b = []
         for frame in self.raw_shooting_pistol_frames_b:
             self.shooting_pistol_frames_b.append(pg.transform.scale(frame, (36, 48)))
+        # Attacking
+        self.raw_attacking_frames_l = [self.game.spritesheet.get_image(99, 34, 26, 30)]
+        self.attacking_frames_l = []
+        for frame in self.raw_attacking_frames_l:
+            self.attacking_frames_l.append(pg.transform.scale(frame, (36, 48)))
         # # Jumping
         # self.jump_frame_r = self.game.spritesheet.get_image(100, 184, 72, 68)
         # self.jump_frame_l = pg.transform.flip(self.jump_frame_r, True, False)
@@ -173,7 +178,7 @@ class  Player(pg.sprite.Sprite):
         print('attack!')
         now = pg.time.get_ticks()
         # Add attack rate to settings
-        if now - self.last_attack > 1000:
+        if now - self.last_attack > 10:
             self.last_attack = now
             self.recovering = True
             self.recovering_start = now
@@ -274,6 +279,10 @@ class  Player(pg.sprite.Sprite):
     def update(self):
         self.calculateExp()
         self.get_keys()
+        if self.attacking:
+            now = pg.time.get_ticks() # Maybe move to a higher level of update() to share
+            if now - self.recovering_start > 10:
+                self.shooting = False
         if self.shooting:
             now = pg.time.get_ticks() # Maybe move to a higher level of update() to share
             if now - self.last_shot > WEAPONS[self.weapon]['rate']:
@@ -292,11 +301,9 @@ class  Player(pg.sprite.Sprite):
                 self.image.fill((255, 255, 255, next(self.damage_alpha)), special_flags=pg.BLEND_RGBA_MULT)
             except:
                 self.damaged = False
-        if self.attacking:     
-            pass
-        else:
-            self.rect = self.image.get_rect()
-            self.rect.center = self.pos
+     
+        self.rect = self.image.get_rect()
+        self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.walls, 'x')
@@ -324,6 +331,25 @@ class  Player(pg.sprite.Sprite):
                 self.image = self.shooting_pistol_frames_l[self.current_frame]
             elif self.facing == 'right':
                 self.image = self.shooting_pistol_frames_r[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+        # Show attacking animation
+        elif self.attacking and now - self.last_attack < 10: # TODO: make this a constant
+            self.last_update = now
+            # self.walking = False
+            self.current_frame = (self.current_frame + 1) % len(self.attacking_frames_l)
+            bottom = self.rect.bottom
+            if self.facing == 'back':
+                pass
+                # self.image = self.attacking_frames_b[self.current_frame]
+            elif self.facing == 'forward':
+                pass
+                # self.image = self.standing_frame_f
+            elif self.facing == 'left':
+                self.image = self.attacking_frames_l[self.current_frame]
+            elif self.facing == 'right':
+                pass
+                # self.image = self.attacking_frames_r[self.current_frame]
             self.rect = self.image.get_rect()
             self.rect.bottom = bottom
         # Show walking animation    
