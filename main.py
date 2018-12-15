@@ -139,6 +139,7 @@ class Game:
         self.skeleton_hit_sounds = []
         for snd in SKELETON_HIT_SOUNDS:
             self.skeleton_hit_sounds.append(pg.mixer.Sound(path.join(snd_folder,snd)))
+        self.mob_hit_sound = pg.mixer.Sound(path.join(snd_folder, MOB_HIT_SOUND))
 
     def new(self):
         # Start a new game and initialize all variables and do all the setup
@@ -228,8 +229,10 @@ class Game:
             # Player attacked and hit the mob
             if self.player.attacking and not self.player.attack_success:
                 self.player.attack_buffer_start = now            
+                hit.hit()
                 hit.health -= ATTACK_DAMAGE
                 hit.vel = vec(0, 0)
+                self.mob_hit_sound.play()
                 self.player.attack_success = True
             else: # Player collides and gets hurt by mob
                 if now - self.player.attack_buffer_start > ATTACK_BUFFER:
@@ -250,6 +253,7 @@ class Game:
         # Bullets hit mobs
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         for mob in hits:
+            mob.hit()
             for bullet in hits[mob]:
                 mob.health -= bullet.damage
             mob.vel = vec(0, 0)

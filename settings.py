@@ -32,7 +32,7 @@ PLAYER_SPEED = 250
 ATTACK_FREQUENCY = 200
 ATTACK_DAMAGE = 5
 ATTACK_RECOVERY = 0
-ATTACK_BUFFER = 200 # After attacking, gives some 
+ATTACK_BUFFER = 350 # After attacking, gives some 
 ATTACK_LUNGE = [5 for i in range(0, 7, 1)] + [-5 for i in range(0, 7, 1)]
 PLAYER_ROT_SPEED = 250
 PLAYER_IMG = 'manBlue_gun.png'
@@ -115,6 +115,7 @@ BOB_SPEED = 0.4
 BG_MUSIC = 'World Map.mp3'
 MUSIC_HOME_TOWN = 'TownTheme.mp3'
 PLAYER_HIT_SOUNDS = ['pain/8.wav', 'pain/9.wav', 'pain/10.wav', 'pain/11.wav',]
+MOB_HIT_SOUND = 'wood_hit_04.ogg'
 ZOMBIE_MOAN_SOUNDS = ['brains2.wav', 'brains3.wav', 'zombie-roar-1.wav', 'zombie-roar-2.wav',
                       'zombie-roar-3.wav', 'zombie-roar-5.wav', 'zombie-roar-6.wav', 'zombie-roar-7.wav']
 ZOMBIE_HIT_SOUNDS = ['splat-15.wav']
@@ -124,7 +125,7 @@ WEAPON_SOUNDS = {'pistol': ['sfx_weapon_singleshot2.wav'],
 EFFECTS_SOUNDS = {'level_start': 'level_start.wav',
                   'health_up': 'health_pack.wav',
                   'gun_pickup': 'gun_pickup.wav'}
-ATTACK_SOUNDS = {'punch': ['wood_slam_04.ogg', 'wood_hit_08.ogg', 'wood_hit_04.ogg']}
+ATTACK_SOUNDS = {'punch': ['jump1.ogg']}
 
 
 

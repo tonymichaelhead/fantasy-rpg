@@ -212,8 +212,8 @@ class  Player(pg.sprite.Sprite):
         now = pg.time.get_ticks()
         if now - self.last_attack > ATTACK_FREQUENCY:
             self.last_attack = now
-            self.recovering = True
-            self.recovering_start = now
+            # self.recovering = True
+            # self.recovering_start = now
             
             # TODO: Add player attack sounds
             choice(self.game.attack_sounds['punch']).play()
@@ -286,7 +286,7 @@ class  Player(pg.sprite.Sprite):
         self.get_keys()
         if self.attacking:
             now = pg.time.get_ticks() # Maybe move to a higher level of update() to share
-            if now - self.recovering_start > ATTACK_FREQUENCY: # TODO: change to frequency?
+            if now - self.last_attack > ATTACK_FREQUENCY:
                 self.attacking = False
             else: 
                 if self.facing == 'left':
@@ -505,6 +505,7 @@ class SkeletonMob(pg.sprite.Sprite):
         self.speed = choice(SKELETON_MOB_SPEEDS)
         self.target = game.player
         self.mode = 'dormant'
+        self.damaged = False
     
     def load_images(self):
         # Standing
@@ -521,6 +522,10 @@ class SkeletonMob(pg.sprite.Sprite):
 
     def dormant(self):
         pass # code to wander around
+
+    def hit(self):
+        self.damaged = True
+        self.damage_alpha = chain(DAMAGE_ALPHA * 1)
 
     def update(self):
         if self.facing == 'right':
@@ -556,6 +561,13 @@ class SkeletonMob(pg.sprite.Sprite):
             self.kill()
             self.game.player.exp += SKELETON_EXP
             self.game.map_img.blit(self.game.skeleton_parts, self.pos - vec(32, 32))
+        self.image = self.image.copy() # A copy seems to need to be made for damage
+        if self.damaged:
+            try:
+                pass
+                self.image.fill((255, 0, 0, next(self.damage_alpha)), special_flags=pg.BLEND_RGBA_MULT)
+            except:
+                self.damaged = False
      
     def draw_health(self):
         if self.health > 60:
