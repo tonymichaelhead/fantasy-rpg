@@ -215,10 +215,11 @@ class Game:
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
             now = pg.time.get_ticks()
-            if self.player.attacking:
+            if self.player.attacking and not self.player.attack_success:
                 self.player.attack_buffer_start = now            
                 hit.health -= ATTACK_DAMAGE
                 hit.vel = vec(0, 0)
+                self.player.attack_success = True
             else:
                 if now - self.player.attack_buffer_start > ATTACK_BUFFER:
                     self.player.attack_buffer_start = 0
@@ -229,7 +230,7 @@ class Game:
                     if self.player.health <= 0:
                         self.playing = False
         if hits:
-            if not self.player.attacking:
+            if not self.player.attacking and now - self.player.attack_buffer_start > ATTACK_BUFFER:
                 self.player.hit()
                 target_dist = self.player.pos - hit.pos
                 self.player.acc = target_dist.normalize()

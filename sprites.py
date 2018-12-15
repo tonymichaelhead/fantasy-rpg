@@ -67,6 +67,7 @@ class  Player(pg.sprite.Sprite):
         self.exp = 0
         self.last_shot = 0
         self.last_attack = 0
+        self.attack_success = False
         self.last_recovering = 0
         self.attack_buffer_start = 0
         self.health = PLAYER_HEALTH
@@ -82,6 +83,7 @@ class  Player(pg.sprite.Sprite):
         self.standing_frame_l = self.game.spritesheet.get_image(33, 0, 28, 32)
         self.standing_frame_l = pg.transform.scale(self.standing_frame_l, (36, 48))
         self.standing_frame_r = pg.transform.flip(self.standing_frame_l, True, False)
+        
         # # Walking
         self.raw_walk_frames_b = [self.game.spritesheet.get_image(3, 65, 26, 31),
                                   self.game.spritesheet.get_image(35, 63, 24, 32),
@@ -104,6 +106,7 @@ class  Player(pg.sprite.Sprite):
         self.walk_frames_r = []
         for frame in self.walk_frames_l:
             self.walk_frames_r.append(pg.transform.flip(frame, True, False))
+        
         # Shooting pistol
         self.raw_shooting_pistol_frames_l = [self.game.spritesheet.get_image(100, 2, 28, 30)]
         self.shooting_pistol_frames_l = []   
@@ -116,6 +119,7 @@ class  Player(pg.sprite.Sprite):
         self.shooting_pistol_frames_b = []
         for frame in self.raw_shooting_pistol_frames_b:
             self.shooting_pistol_frames_b.append(pg.transform.scale(frame, (36, 48)))
+       
         # Attacking
         self.raw_attacking_frames_l = [self.game.spritesheet.get_image(99, 34, 26, 30)]
         self.attacking_frames_l = []
@@ -166,6 +170,7 @@ class  Player(pg.sprite.Sprite):
             self.shoot()
 
     def calculateExp(self):
+        # Calculate experience points and increment level
         if self.exp >= 100:
             if self.exp > 100:
                 remainder = self.exp - 100
@@ -175,55 +180,25 @@ class  Player(pg.sprite.Sprite):
             self.exp = 0 + remainder
     
     def attack(self):
+        # Iniate Melee attack
         if not self.attacking:
             self.attacking = True
             self.attack_lunge = chain(ATTACK_LUNGE)
+            self.attack_success = False
         print('attack!')
         now = pg.time.get_ticks()
-        # Add attack rate to settings
         if now - self.last_attack > ATTACK_FREQUENCY:
             self.last_attack = now
             self.recovering = True
             self.recovering_start = now
-            # Determine direction and kickback
-            # if self.facing == 'left':
-            #     try:
-            #         vel = next(self.attack_lunge)
-            #         self.pos.x -= vel
-            #     except:
-            #         pass
-            # elif self.facing == 'right':
-            #     vel = next(self.attack_lunge)
-                
-            # elif self.facing == 'forward':
-            #     vel = next(self.attack_lunge)
-                
-            # elif self.facing == 'back':
-            #     vel = next(self.attack_lunge)
-                
-            # self.pos += self.vel * self.game.dt
-            # self.rect = self.image.get_rect()
-            # self.rect.center = self.pos
-            # self.pos += self.vel * self.game.dt
-            # self.hit_rect.centerx = self.pos.x
-            # Barrel Offset
-            # if self.facing == 'right':
-            #     pos = self.pos + BARREL_OFFSET_r
-            # if self.facing == 'left':
-            #     pos = self.pos + BARREL_OFFSET_l
-            # if self.facing == 'forward':
-            #     pos = self.pos + BARREL_OFFSET_f
-            # if self.facing == 'back':
-            #     pos = self.pos + BARREL_OFFSET_b
-            # for i in range(WEAPONS[self.weapon]['bullet_count']):
-            #     spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
-            #     Bullet(self.game, pos, dir.rotate(spread), WEAPONS[self.weapon]['damage'])
-            #     choice(self.game.weapon_sounds[self.weapon]).play()
-            #     snd = choice(self.game.weapon_sounds[self.weapon])
-            #     if snd.get_num_channels() > 2:
-            #         snd.stop()
-            #     snd.play()
-            # MuzzleFlash(self.game, pos)
+            
+            # TODO: Add player attack sounds
+            # choice(self.game.weapon_sounds[self.weapon]).play()
+            # snd = choice(self.game.weapon_sounds[self.weapon])
+            # if snd.get_num_channels() > 2:
+            #     snd.stop()
+            # snd.play()
+            
             
     def shoot(self):
         now = pg.time.get_ticks()
@@ -283,6 +258,7 @@ class  Player(pg.sprite.Sprite):
         self.damage_alpha = chain(DAMAGE_ALPHA * 4)
 
     def update(self):
+        # Calculate experience and level up if necessary
         self.calculateExp()
         self.get_keys()
         if self.attacking:
@@ -324,8 +300,6 @@ class  Player(pg.sprite.Sprite):
             if now - self.recovering_start > WEAPONS[self.weapon]['rate']:
                 self.recovering = False
         self.animate()
-        # self.rot = (self.rot + self.rot_speed * self.game.dt) % 360 #TODO: probably not gonna rotate
-        # self.image = pg.transform.rotate(self.image, self.rot)
         self.image = self.image.copy() # A copy seems to need to be made for damage
         if self.damaged:
             try:
@@ -345,14 +319,10 @@ class  Player(pg.sprite.Sprite):
    
     def animate(self):
         now = pg.time.get_ticks()
-        # if self.vel.x != 0:
-        #     self.walking = True
-        # else:
-        #     self.walking = False
+        
         # Draw gun if shooting
         if self.shooting and now - self.last_shot < WEAPONS[self.weapon]['rate']:
             self.last_update = now
-            # self.walking = False
             self.current_frame = (self.current_frame + 1) % len(self.shooting_pistol_frames_l)
             bottom = self.rect.bottom
             if self.facing == 'back':
@@ -365,25 +335,23 @@ class  Player(pg.sprite.Sprite):
                 self.image = self.shooting_pistol_frames_r[self.current_frame]
             self.rect = self.image.get_rect()
             self.rect.bottom = bottom
+        
         # Show attacking animation
         elif self.attacking and now - self.last_attack < ATTACK_FREQUENCY: # TODO: make this a constant
             self.last_update = now
-            # self.walking = False
             self.current_frame = (self.current_frame + 1) % len(self.attacking_frames_l)
             bottom = self.rect.bottom
             if self.facing == 'back':
                 pass
-                # self.image = self.attacking_frames_b[self.current_frame]
             elif self.facing == 'forward':
                 pass
-                # self.image = self.standing_frame_f
             elif self.facing == 'left':
                 self.image = self.attacking_frames_l[self.current_frame]
             elif self.facing == 'right':
                 self.image = self.attacking_frames_r[self.current_frame]
-                # self.image = self.attacking_frames_r[self.current_frame]
             self.rect = self.image.get_rect()
             self.rect.bottom = bottom
+       
         # Show walking animation    
         elif self.walking:
             if now - self.last_update > 100:
@@ -391,20 +359,18 @@ class  Player(pg.sprite.Sprite):
                 self.current_frame = (self.current_frame + 1) % len(self.walk_frames_b)
                 bottom = self.rect.bottom
                 if self.facing == 'back':
-                    # self.facing = 'back'
                     self.image = self.walk_frames_b[self.current_frame]
                 elif self.facing == 'forward':
-                    # self.facing = 'forward'
                     self.image = self.walk_frames_f[self.current_frame]
                 elif self.facing == 'left':
-                    # self.facing = 'left'
                     self.image = self.walk_frames_l[self.current_frame]
                 elif self.facing == 'right':
-                    # self.facing = 'right'
                     self.image = self.walk_frames_r[self.current_frame]
                 self.rect = self.image.get_rect()
                 self.rect.bottom = bottom
-        else:
+        
+        # Display standing frames
+        else: 
             if self.facing == 'back':
                 self.image = self.standing_frame_b
             elif self.facing == 'forward':
@@ -413,13 +379,6 @@ class  Player(pg.sprite.Sprite):
                 self.image = self.standing_frame_l
             elif self.facing == 'right':
                 self.image = self.standing_frame_r
-
-        # else: # TODO: MAYBE??
-        #     bottom = self.rect.bottom
-        #     self.last_update = now
-        #     self.current_frame = (self.current_frame + 1) % len(self.walk_frames_b)
-        #     self.rect = self.image.get_rect()
-        #     self.rect.bottom = bottom
 
         # TODO: Possibly use for pixel collisions
         # self.mask = pg.mask.from_surface(self.image)
@@ -542,18 +501,14 @@ class SkeletonMob(pg.sprite.Sprite):
         if target_dist.length_squared() < DETECT_RADIUS**2:
             if random() < 0.002:
                 choice(self.game.zombie_moan_sounds).play()
-            # self.rot = target_dist.angle_to(vec(1, 0))
-            # self.image = pg.transform.rotate(self.game.mob_img, self.rot)
             # self.rect = self.image.get_rect()
             self.rect.center = self.pos # TODO: probably should comment out
-            # self.acc = vec(1, 0).rotate(-self.rot)
             self.acc = target_dist.normalize()
             if target_dist[0] > 0:
                 self.facing = 'right'
             else:
                 self.facing = 'left'
             self.avoid_mobs()
-            # print(self.acc)
             self.acc.scale_to_length(self.speed)
             self.acc += self.vel * -1
             self.vel += self.acc * self.game.dt
@@ -608,10 +563,7 @@ class Npc(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = (0, 0)
         self.rect.center = self.pos
-        # self.rot = 0
-        # self.health = SKELETON_MOB_HEALTH
         self.speed = choice(SKELETON_MOB_SPEEDS)
-        # self.target = game.player
     
     def load_images(self):
         # Standing
@@ -650,6 +602,7 @@ class Npc(pg.sprite.Sprite):
             self.image = self.standing_frame_r.copy()
         
     def wander(self):
+        # Walk back and forth
         hit = pg.sprite.collide_rect(self, self.game.player)
         if not hit:    
             if self.facing == 'back':
@@ -693,7 +646,6 @@ class Bullet(pg.sprite.Sprite):
         self.hit_rect = self.rect
         self.pos = vec(pos)
         self.rect.center = pos
-        # spread = uniform(-GUN_SPREAD, GUN_SPREAD)
         self.vel = dir * WEAPONS[game.player.weapon]['bullet_speed'] * uniform(0.9, 1.1)
         self.spawn_time = pg.time.get_ticks()
         self.damage = damage
