@@ -27,6 +27,29 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
+# FIXME: Use for player attacking and halting on contact with mob
+def collide_with_mob(sprite, group, dir):
+    if dir == 'x' and sprite.attacking:
+        hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
+        if hits:
+            if hits[0].rect.centerx > sprite.hit_rect.centerx:
+                # sprite.pos.x = hits[0].rect.left - sprite.hit_rect.width / 2
+                hits[0].pos.x = sprite.rect.right - hits[0].hit_rect.width / 2
+            if hits[0].rect.centerx < sprite.hit_rect.centerx:
+                # sprite.pos.x = hits[0].rect.right + sprite.hit_rect.width / 2
+                hits[0].pos.x = sprite.rect.right + hits[0].hit_rect.width / 2
+            sprite.vel.x = 0
+            sprite.hit_rect.centerx = sprite.pos.x
+    if dir == 'y' and sprite.attacking:
+        hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
+        if hits:
+            if hits[0].rect.centery > sprite.hit_rect.centery:
+                sprite.pos.y = hits[0].rect.top - sprite.hit_rect.height / 2
+            if hits[0].rect.centery < sprite.hit_rect.centery:
+                sprite.pos.y = hits[0].rect.bottom + sprite.hit_rect.height / 2
+            sprite.vel.y = 0
+            sprite.hit_rect.centery = sprite.pos.y
+
 class SpriteSheet:
     # Utility class for loading and parsing sprite sheets
     def __init__(self, filename):
@@ -193,11 +216,11 @@ class  Player(pg.sprite.Sprite):
             self.recovering_start = now
             
             # TODO: Add player attack sounds
-            # choice(self.game.weapon_sounds[self.weapon]).play()
-            # snd = choice(self.game.weapon_sounds[self.weapon])
-            # if snd.get_num_channels() > 2:
-            #     snd.stop()
-            # snd.play()
+            choice(self.game.attack_sounds['punch']).play()
+            snd = choice(self.game.attack_sounds['punch'])
+            if snd.get_num_channels() > 2:
+                snd.stop()
+            snd.play()
             
             
     def shoot(self):
@@ -291,6 +314,7 @@ class  Player(pg.sprite.Sprite):
                         self.pos.y += vel
                     except:
                         pass
+            
         if self.shooting:
             now = pg.time.get_ticks() # Maybe move to a higher level of update() to share
             if now - self.last_shot > WEAPONS[self.weapon]['rate']:
@@ -312,7 +336,13 @@ class  Player(pg.sprite.Sprite):
         self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
         self.hit_rect.centerx = self.pos.x
+        # Bump up against mobs if attacking # FIXME:
+        # self.hit_rect.centery = self.pos.y
+        # collide_with_mob(self, self.game.skeleton_mobs, 'y')
+        # Collide with walls
+        # self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.walls, 'x')
+        self.rect.center = self.hit_rect.center
         self.hit_rect.centery = self.pos.y
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center

@@ -111,6 +111,13 @@ class Game:
         self.effects_sounds = {}
         for type in EFFECTS_SOUNDS:
             self.effects_sounds[type] = pg.mixer.Sound(path.join(snd_folder, EFFECTS_SOUNDS[type]))
+        self.attack_sounds = {}
+        for attack_type in ATTACK_SOUNDS:
+            self.attack_sounds[attack_type] = []
+            for snd in ATTACK_SOUNDS[attack_type]:
+                s = pg.mixer.Sound(path.join(snd_folder, snd))
+                s.set_volume(0.3)
+                self.attack_sounds[attack_type].append(s)
         self.weapon_sounds = {}
         for weapon in WEAPON_SOUNDS:
             self.weapon_sounds[weapon] = []
@@ -192,9 +199,11 @@ class Game:
         # Game loop - update
         self.all_sprites.update()
         self.camera.update(self.player)
+
         # Game over?
         # if len(self.mobs) == 0:
         #     self.playing = False
+        
         # Player hits items
         hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
@@ -206,21 +215,23 @@ class Game:
                 hit.kill()
                 self.effects_sounds['gun_pickup'].play()
                 self.player.weapon = 'shotgun'
-        # Player hits 
+        
         # Player hits exits
         hits = pg.sprite.spritecollide(self.player, self.exits, False)
         for hit in hits:
             self.change_map(hit.map_file, hit.music_file, hit.spawn_player_x, hit.spawn_player_y)
+        
         # Mob hits player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
             now = pg.time.get_ticks()
+            # Player attacked and hit the mob
             if self.player.attacking and not self.player.attack_success:
                 self.player.attack_buffer_start = now            
                 hit.health -= ATTACK_DAMAGE
                 hit.vel = vec(0, 0)
                 self.player.attack_success = True
-            else:
+            else: # Player collides and gets hurt by mob
                 if now - self.player.attack_buffer_start > ATTACK_BUFFER:
                     self.player.attack_buffer_start = 0
                     if random() < 0.7:
@@ -229,12 +240,13 @@ class Game:
                     hit.vel = vec(0, 0)
                     if self.player.health <= 0:
                         self.playing = False
-        if hits:
+        if hits: # Player gets damaged by every mob the collide with TODO: Check if this can be put in the else clause above
             if not self.player.attacking and now - self.player.attack_buffer_start > ATTACK_BUFFER:
                 self.player.hit()
                 target_dist = self.player.pos - hit.pos
                 self.player.acc = target_dist.normalize()
                 self.player.pos += (self.player.acc.x * MOB_KNOCKBACK, self.player.acc.y * MOB_KNOCKBACK)
+        
         # Bullets hit mobs
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         for mob in hits:

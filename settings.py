@@ -124,6 +124,7 @@ WEAPON_SOUNDS = {'pistol': ['sfx_weapon_singleshot2.wav'],
 EFFECTS_SOUNDS = {'level_start': 'level_start.wav',
                   'health_up': 'health_pack.wav',
                   'gun_pickup': 'gun_pickup.wav'}
+ATTACK_SOUNDS = {'punch': ['wood_slam_04.ogg', 'wood_hit_08.ogg', 'wood_hit_04.ogg']}
 
 
 
