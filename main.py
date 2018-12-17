@@ -68,17 +68,21 @@ class Game:
         self.menu_title_rect = self.menu_title.get_rect()
         self.menu_title_rect.center = (WIDTH / 2, 50)
 
-        self.menu_choice_1 = choice_font.render("Potion                    10 gold", True, WHITE)
-        self.menu_choice_1_rect = self.menu_choice_1.get_rect()
-        self.menu_choice_1_rect.center = (WIDTH / 2, HEIGHT / 3)
+        self.menu_choices = []
+        self.menu_choice_rects = []
+        
+        for i in choices:
+            self.menu_choice[i] = choice_font.render("Potion                    10 gold", True, WHITE)
+            self.menu_choice_rects[i] = self.menu_choice[i].get_rect()
+            self.menu_choice_rect[i].center = (WIDTH / 2, HEIGHT / 3)
 
-        self.menu_choice_2 = choice_font.render("Revolver            150 gold", True, WHITE)
-        self.menu_choice_2_rect = self.menu_choice_2.get_rect()
-        self.menu_choice_2_rect.center = (WIDTH / 2, HEIGHT / 3 + 50)
+        # self.menu_choice_2 = choice_font.render("Revolver            150 gold", True, WHITE)
+        # self.menu_choice_2_rect = self.menu_choice_2.get_rect()
+        # self.menu_choice_2_rect.center = (WIDTH / 2, HEIGHT / 3 + 50)
 
-        self.menu_choice_3 = choice_font.render("Cloak                     100 gold", True, WHITE)
-        self.menu_choice_3_rect = self.menu_choice_3.get_rect()
-        self.menu_choice_3_rect.center = (WIDTH / 2, HEIGHT / 3 + 100)
+        # self.menu_choice_3 = choice_font.render("Cloak                     100 gold", True, WHITE)
+        # self.menu_choice_3_rect = self.menu_choice_3.get_rect()
+        # self.menu_choice_3_rect.center = (WIDTH / 2, HEIGHT / 3 + 100)
         # self.draw_text("What would you like?", self.hud_font, 45, WHITE, WIDTH / 2, 50, align="center")
         # self.draw_text("Potion                    10 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3, align="center")
         # self.draw_text("Revolver            150 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3 + 50, align="center")
