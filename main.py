@@ -164,7 +164,7 @@ class Game:
             if tile_object.name == 'skeleton':
                 SkeletonMob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'npc':
-                Npc(self, tile_object.npc_name, tile_object.mode, obj_center.x, obj_center.y)
+                Npc(self, tile_object.npc_name, tile_object.mode, tile_object.facing, obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)
@@ -178,6 +178,7 @@ class Game:
         self.draw_debug = False
         # self.effects_sounds['level_start'].play()
         self.paused = False
+        self.merchant_menu = False
         self.night = False
         # self.effects_sounds['level_start'].play()
 
@@ -223,7 +224,7 @@ class Game:
             self.change_map(hit.map_file, hit.music_file, hit.spawn_player_x, hit.spawn_player_y)
         
         # Mob hits player
-        hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
+        hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect_mob)
         for hit in hits:
             now = pg.time.get_ticks()
             # Player attacked and hit the mob
@@ -288,18 +289,23 @@ class Game:
                 pg.draw.rect(self.screen, CYAN, self.camera.apply_rect(wall.rect), 1)
         if self.night:
             self.render_fog()
+        if self.merchant_menu:
+            self.screen.blit(self.dim_screen, (0, 0))
+
         # *after* drawing everything, flip the display
         # HUD functions
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
-        self.draw_text("Stats", self.hud_font, 30, WHITE, 
-                       WIDTH - 10, 10, align="ne")
         self.draw_text("Lvl: {}".format(self.player.level), self.hud_font, 30, WHITE, 
-                       WIDTH - 10, 40, align="ne")
+                       WIDTH - 10, 10, align="ne")
         self.draw_text("Exp: {}".format(self.player.exp), self.hud_font, 30, WHITE, 
+                       WIDTH - 10, 40, align="ne")
+        self.draw_text("Gold: {}".format(self.player.wallet), self.hud_font, 30, WHITE, 
                        WIDTH - 10, 70, align="ne")
+
         if self.paused:
             self.screen.blit(self.dim_screen, (0, 0))
             self.draw_text("Paused", self.title_font, 105, RED, WIDTH / 2, HEIGHT / 2, align="center")
+        
         pg.display.flip()
 
     def events(self):
@@ -369,7 +375,56 @@ class Game:
         # Kill old BGM and load new map music
         pg.mixer.music.load(path.join(self.music_folder, music_file))
         pg.mixer.music.play(loops=-1)
-            
+
+    def show_merchant_menu(self):
+        # TODO: Move to npc_data
+        items = {1: {'name': 'Potion', 'price': 10}, 
+                    2: {'name': 'Revolver', 'price': 150}, 
+                    3: {'name': 'Cloak', 'price': 100}}
+        # For stores and hotels where item and service transactions occur
+        self.merchant_menu = True
+        shopping = True
+        self.current_choice = 1
+        arrow_pos = {1: HEIGHT / 3,
+                     2: HEIGHT / 3 + 50,
+                     3: HEIGHT / 3 + 100}
+        while shopping:
+            self.draw()
+            self.draw_text("What would you like?", self.hud_font, 45, WHITE, WIDTH / 2, 50, align="center")
+            self.draw_text("Potion                    10 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3, align="center")
+            self.draw_text("Revolver            150 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3 + 50, align="center")
+            self.draw_text("Cloak                     100 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3 + 100, align="center")
+            # Selection arrow
+            self.draw_text("oxx{=======-", self.hud_font, 30, WHITE, WIDTH / 2 - 300, arrow_pos[self.current_choice], align="center")
+            pg.display.flip()
+            choice = self.wait_for_menu_keys()
+            if choice == 0:
+                shopping = False
+            elif choice == 'selection':
+                pass
+            else:
+                if items[choice]['price'] > self.player.wallet:
+                    self.draw()
+                    self.draw_text("You appear to not have the funds for that", 
+                                   self.hud_font, 45, WHITE, WIDTH / 2, HEIGHT / 2, align="center")
+                    pg.display.flip()
+                    self.wait_for_key()
+                else: 
+                    shopping = False
+        # Show confirmation message on purchase
+        if choice == 0:
+            confirmation_message = "Thanks for stopping by"
+        else:    
+            confirmation_message = "You bought a {}".format(items[choice]['name'])
+        # Subtract price if an item was bought
+        if choice != 0:
+            self.player.wallet -= items[choice]['price']
+        self.draw()
+        self.draw_text(confirmation_message, self.hud_font, 45, WHITE, WIDTH / 2, HEIGHT / 2, align="center")
+        pg.display.flip()
+        self.wait_for_key()
+        self.merchant_menu = False
+
     def show_start_screen(self):
         # Game splash/start screen
         pass
@@ -395,7 +450,37 @@ class Game:
                     self.quit()
                 if event.type == pg.KEYUP:
                     waiting = False
-
+    
+    def wait_for_menu_keys(self):
+        pg.event.wait()
+        waiting = True
+        while waiting:
+            self.clock.tick(FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.quit()
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_1:
+                        waiting = False
+                        return 1
+                    if event.key == pg.K_2:
+                        waiting = False
+                        return 2
+                    if event.key == pg.K_3:
+                        waiting = False
+                        return 3
+                    if event.key == pg.K_z:
+                        waiting = False
+                        return 0
+                    if event.key == pg.K_UP:
+                        self.current_choice -= 1
+                        return 'selection'
+                        
+                    if event.key == pg.K_DOWN:
+                        self.current_choice += 1
+                        return 'selection'
+                        
     
 g = Game()
 g.show_start_screen()

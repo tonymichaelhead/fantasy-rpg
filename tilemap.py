@@ -5,6 +5,9 @@ from settings import *
 def collide_hit_rect(one, two):
     return one.hit_rect.colliderect(two.rect)
 
+def collide_hit_rect_mob(one, two):
+    return one.hit_rect.colliderect(two.hit_rect)
+
 # Deprecated, here for reference
 class Map:
     def __init__(self, filename):

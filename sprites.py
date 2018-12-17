@@ -28,27 +28,27 @@ def collide_with_walls(sprite, group, dir):
             sprite.hit_rect.centery = sprite.pos.y
 
 # FIXME: Use for player attacking and halting on contact with mob
-def collide_with_mob(sprite, group, dir):
-    if dir == 'x' and sprite.attacking:
-        hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
-        if hits:
-            if hits[0].rect.centerx > sprite.hit_rect.centerx:
-                # sprite.pos.x = hits[0].rect.left - sprite.hit_rect.width / 2
-                hits[0].pos.x = sprite.rect.right - hits[0].hit_rect.width / 2
-            if hits[0].rect.centerx < sprite.hit_rect.centerx:
-                # sprite.pos.x = hits[0].rect.right + sprite.hit_rect.width / 2
-                hits[0].pos.x = sprite.rect.right + hits[0].hit_rect.width / 2
-            sprite.vel.x = 0
-            sprite.hit_rect.centerx = sprite.pos.x
-    if dir == 'y' and sprite.attacking:
-        hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
-        if hits:
-            if hits[0].rect.centery > sprite.hit_rect.centery:
-                sprite.pos.y = hits[0].rect.top - sprite.hit_rect.height / 2
-            if hits[0].rect.centery < sprite.hit_rect.centery:
-                sprite.pos.y = hits[0].rect.bottom + sprite.hit_rect.height / 2
-            sprite.vel.y = 0
-            sprite.hit_rect.centery = sprite.pos.y
+# def collide_with_mob(sprite, group, dir):
+#     if dir == 'x' and sprite.attacking:
+#         hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect_mob)
+#         if hits:
+#             if hits[0].rect.centerx > sprite.hit_rect.centerx:
+#                 # sprite.pos.x = hits[0].rect.left - sprite.hit_rect.width / 2
+#                 hits[0].pos.x = sprite.rect.right - hits[0].hit_rect.width / 2
+#             if hits[0].rect.centerx < sprite.hit_rect.centerx:
+#                 # sprite.pos.x = hits[0].rect.right + sprite.hit_rect.width / 2
+#                 hits[0].pos.x = sprite.rect.right + hits[0].hit_rect.width / 2
+#             sprite.vel.x = 0
+#             sprite.hit_rect.centerx = sprite.pos.x
+#     if dir == 'y' and sprite.attacking:
+#         hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect_mob)
+#         if hits:
+#             if hits[0].rect.centery > sprite.hit_rect.centery:
+#                 sprite.pos.y = hits[0].rect.top - sprite.hit_rect.height / 2
+#             if hits[0].rect.centery < sprite.hit_rect.centery:
+#                 sprite.pos.y = hits[0].rect.bottom + sprite.hit_rect.height / 2
+#             sprite.vel.y = 0
+#             sprite.hit_rect.centery = sprite.pos.y
 
 class SpriteSheet:
     # Utility class for loading and parsing sprite sheets
@@ -88,6 +88,7 @@ class  Player(pg.sprite.Sprite):
         # Player Stats
         self.level = 1
         self.exp = 0
+        self.wallet = 175
         self.last_shot = 0
         self.last_attack = 0
         self.attack_success = False
@@ -264,17 +265,20 @@ class  Player(pg.sprite.Sprite):
     def talk(self):
         hits = pg.sprite.spritecollide(self, self.game.npcs, False)
         if hits:
-            if not hits[0].talked_to:
-                for line in hits[0].dialogue_1:
-                    self.game.draw_dialogue(line)
-                    pg.display.flip()
-                    self.game.wait_for_key()
-                hits[0].talked_to = True
+            if hits[0].is_merchant:
+                self.game.show_merchant_menu()
             else:
-                for line in hits[0].dialogue_2:
-                    self.game.draw_dialogue(line)
-                    pg.display.flip()
-                    self.game.wait_for_key()
+                if not hits[0].talked_to:
+                    for line in hits[0].dialogue_1:
+                        self.game.draw_dialogue(line)
+                        pg.display.flip()
+                        self.game.wait_for_key()
+                    hits[0].talked_to = True
+                else:
+                    for line in hits[0].dialogue_2:
+                        self.game.draw_dialogue(line)
+                        pg.display.flip()
+                        self.game.wait_for_key()
 
     def hit(self):
         self.damaged = True
@@ -589,6 +593,7 @@ class Npc(pg.sprite.Sprite):
         self.game = game
         self.char_name = char_name
         self.char_data = NPCS[char_name]
+        self.is_merchant = NPCS[char_name]['is_merchant']
         self.load_images()
         self.dialogue_1 = NPCS[char_name]['dialogue_1']
         self.dialogue_2 = NPCS[char_name]['dialogue_2']
