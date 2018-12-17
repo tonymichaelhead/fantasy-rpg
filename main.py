@@ -68,13 +68,16 @@ class Game:
         self.menu_title_rect = self.menu_title.get_rect()
         self.menu_title_rect.center = (WIDTH / 2, 50)
 
+        # TODO: Pass in as argument
+        choices = [{'choice': 'Potion                    10 gold'}]
+
         self.menu_choices = []
         self.menu_choice_rects = []
         
-        for i in choices:
-            self.menu_choice[i] = choice_font.render("Potion                    10 gold", True, WHITE)
-            self.menu_choice_rects[i] = self.menu_choice[i].get_rect()
-            self.menu_choice_rect[i].center = (WIDTH / 2, HEIGHT / 3)
+        for i, choice in enumerate(choices):
+            self.menu_choices.append(choice_font.render(choices[i]['choice'], True, WHITE))
+            self.menu_choice_rects.append(self.menu_choices[i].get_rect())
+            self.menu_choice_rects[i].center = (WIDTH / 2, HEIGHT / 3)
 
         # self.menu_choice_2 = choice_font.render("Revolver            150 gold", True, WHITE)
         # self.menu_choice_2_rect = self.menu_choice_2.get_rect()
@@ -340,11 +343,10 @@ class Game:
         if self.merchant_menu:
             self.screen.blit(self.dim_screen, (0, 0))
             self.screen.blit(self.selection_arrow, self.selection_arrow_rect)
-            self.screen.blit(self.menu_title, self.menu_title_rect) 
-            self.screen.blit(self.menu_choice_1, self.menu_choice_1_rect) 
-            self.screen.blit(self.menu_choice_2, self.menu_choice_2_rect) 
-            self.screen.blit(self.menu_choice_3, self.menu_choice_3_rect) 
-
+            self.screen.blit(self.menu_title, self.menu_title_rect)
+            for i, choice in enumerate(self.menu_choices):
+                self.screen.blit(self.menu_choices[i], self.menu_choice_rects[i]) 
+            
         # *after* drawing everything, flip the display
         # HUD functions
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
@@ -456,7 +458,7 @@ class Game:
             # self.draw_text("oxx{=======-", self.hud_font, 30, WHITE, WIDTH / 2 - 300, arrow_pos[self.current_choice], align="center")
             # pg.display.flip()
             choice = self.wait_for_menu_keys()
-            if choice == 0:
+            if choice == 'cancel':
                 shopping = False
             elif choice != 'selection':
                 if items[choice]['price'] > self.player.wallet:
@@ -519,27 +521,27 @@ class Game:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_1:
                         waiting = False
-                        return 1
+                        return 0
                     if event.key == pg.K_2:
                         waiting = False
-                        return 2
+                        return 1
                     if event.key == pg.K_3:
                         waiting = False
-                        return 3
+                        return 2
                     if event.key == pg.K_z:
                         waiting = False
-                        return 0
+                        return 'cancel'
                     if event.key == pg.K_UP:
-                        if self.current_choice > 1:
+                        if self.current_choice > 0:
                             self.current_choice -= 1
                         else:
-                            self.current_choice = 3
+                            self.current_choice = 2
                         return 'selection'
                     if event.key == pg.K_DOWN:
-                        if self.current_choice < 3:
+                        if self.current_choice < 2:
                             self.current_choice += 1
                         else:
-                            self.current_choice = 1
+                            self.current_choice = 0
                         return 'selection'
                         
     
