@@ -181,6 +181,10 @@ class Game:
         self.merchant_menu = False
         self.night = False
         # self.effects_sounds['level_start'].play()
+        # Selection arrow for menu
+        # self.selection_arrow = self.hud_font.render(text, True, color)
+        # self.selection_arrow_rect = self.selection_arrow.get_rect()
+        # self.selection_arrow = 
 
     def run(self):
         # Game loop - set self.playing = False to end the game
