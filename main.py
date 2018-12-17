@@ -69,7 +69,9 @@ class Game:
         self.menu_title_rect.center = (WIDTH / 2, 50)
 
         # TODO: Pass in as argument
-        choices = [{'choice': 'Potion                    10 gold'}]
+        choices = [{'choice': 'Potion                    10 gold'},
+                   {'choice': 'Revolver            150 gold'},
+                   {'choice': 'Cloak                     100 gold'}]
 
         self.menu_choices = []
         self.menu_choice_rects = []
@@ -77,7 +79,7 @@ class Game:
         for i, choice in enumerate(choices):
             self.menu_choices.append(choice_font.render(choices[i]['choice'], True, WHITE))
             self.menu_choice_rects.append(self.menu_choices[i].get_rect())
-            self.menu_choice_rects[i].center = (WIDTH / 2, HEIGHT / 3)
+            self.menu_choice_rects[i].center = (WIDTH / 2, HEIGHT / 3 + i * 50)
 
         # self.menu_choice_2 = choice_font.render("Revolver            150 gold", True, WHITE)
         # self.menu_choice_2_rect = self.menu_choice_2.get_rect()
@@ -433,16 +435,16 @@ class Game:
 
     def show_merchant_menu(self):
         # TODO: Move to npc_data
-        items = {1: {'name': 'Potion', 'price': 10}, 
-                 2: {'name': 'Revolver', 'price': 150}, 
-                 3: {'name': 'Cloak', 'price': 100}}
+        items = {0: {'name': 'Potion', 'price': 10}, 
+                 1: {'name': 'Revolver', 'price': 150}, 
+                 2: {'name': 'Cloak', 'price': 100}}
         # For stores and hotels where item and service transactions occur
         self.merchant_menu = True
         shopping = True
-        self.current_choice = 1
-        arrow_pos = {1: HEIGHT / 3,
-                     2: HEIGHT / 3 + 50,
-                     3: HEIGHT / 3 + 100}
+        self.current_choice = 0
+        arrow_pos = {0: HEIGHT / 3,
+                     1: HEIGHT / 3 + 50,
+                     2: HEIGHT / 3 + 100}
         # Selection arrow for menu
         font = pg.font.Font(self.hud_font, 30)
         self.selection_arrow = font.render("oxx{=======-", True, WHITE)
@@ -470,12 +472,12 @@ class Game:
                 else: 
                     shopping = False
         # Show confirmation message on purchase
-        if choice == 0:
+        if choice == 'cancel':
             confirmation_message = "Thanks for stopping by"
         else:    
             confirmation_message = "You bought a {}".format(items[choice]['name'])
         # Subtract price if an item was bought
-        if choice != 0:
+        if choice != 'cancel':
             self.player.wallet -= items[choice]['price']
         self.draw()
         self.draw_text(confirmation_message, self.hud_font, 45, WHITE, WIDTH / 2, HEIGHT / 2, align="center")
