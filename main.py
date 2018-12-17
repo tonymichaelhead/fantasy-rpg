@@ -60,6 +60,49 @@ class Game:
         if align == "center":
             text_rect.center = (x, y)
         self.screen.blit(text_surface, text_rect)
+    
+    def draw_menu(self):
+        title_font = pg.font.Font(self.hud_font, 45)
+        choice_font = pg.font.Font(self.hud_font, 30)
+        self.menu_title = title_font.render("What would you like?", True, WHITE)
+        self.menu_title_rect = self.menu_title.get_rect()
+        self.menu_title_rect.center = (WIDTH / 2, 50)
+
+        self.menu_choice_1 = choice_font.render("Potion                    10 gold", True, WHITE)
+        self.menu_choice_1_rect = self.menu_choice_1.get_rect()
+        self.menu_choice_1_rect.center = (WIDTH / 2, HEIGHT / 3)
+
+        self.menu_choice_2 = choice_font.render("Revolver            150 gold", True, WHITE)
+        self.menu_choice_2_rect = self.menu_choice_2.get_rect()
+        self.menu_choice_2_rect.center = (WIDTH / 2, HEIGHT / 3 + 50)
+
+        self.menu_choice_3 = choice_font.render("Cloak                     100 gold", True, WHITE)
+        self.menu_choice_3_rect = self.menu_choice_3.get_rect()
+        self.menu_choice_3_rect.center = (WIDTH / 2, HEIGHT / 3 + 100)
+        # self.draw_text("What would you like?", self.hud_font, 45, WHITE, WIDTH / 2, 50, align="center")
+        # self.draw_text("Potion                    10 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3, align="center")
+        # self.draw_text("Revolver            150 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3 + 50, align="center")
+        # self.draw_text("Cloak                     100 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3 + 100, align="center")
+        
+        # if align == "nw":
+        #     text_rect.topleft = (x, y)
+        # if align == "ne":
+        #     text_rect.topright = (x, y)
+        # if align == "sw":
+        #     text_rect.bottomleft = (x, y)
+        # if align == "se":
+        #     text_rect.bottomright = (x, y)
+        # if align == "n":
+        #     text_rect.midtop = (x, y)
+        # if align == "s":
+        #     text_rect.midbottom = (x, y)
+        # if align == "e":
+        #     text_rect.midright = (x, y)
+        # if align == "w":
+        #     text_rect.midleft = (x, y)
+        # if align == "center":
+        #     text_rect.center = (x, y)
+        
 
     def draw_dialogue(self, text):
         dialogue_box = pg.Surface((WIDTH / 2, 100)).convert_alpha()
@@ -181,10 +224,7 @@ class Game:
         self.merchant_menu = False
         self.night = False
         # self.effects_sounds['level_start'].play()
-        # Selection arrow for menu
-        # self.selection_arrow = self.hud_font.render(text, True, color)
-        # self.selection_arrow_rect = self.selection_arrow.get_rect()
-        # self.selection_arrow = 
+
 
     def run(self):
         # Game loop - set self.playing = False to end the game
@@ -295,6 +335,11 @@ class Game:
             self.render_fog()
         if self.merchant_menu:
             self.screen.blit(self.dim_screen, (0, 0))
+            self.screen.blit(self.selection_arrow, self.selection_arrow_rect)
+            self.screen.blit(self.menu_title, self.menu_title_rect) 
+            self.screen.blit(self.menu_choice_1, self.menu_choice_1_rect) 
+            self.screen.blit(self.menu_choice_2, self.menu_choice_2_rect) 
+            self.screen.blit(self.menu_choice_3, self.menu_choice_3_rect) 
 
         # *after* drawing everything, flip the display
         # HUD functions
@@ -383,8 +428,8 @@ class Game:
     def show_merchant_menu(self):
         # TODO: Move to npc_data
         items = {1: {'name': 'Potion', 'price': 10}, 
-                    2: {'name': 'Revolver', 'price': 150}, 
-                    3: {'name': 'Cloak', 'price': 100}}
+                 2: {'name': 'Revolver', 'price': 150}, 
+                 3: {'name': 'Cloak', 'price': 100}}
         # For stores and hotels where item and service transactions occur
         self.merchant_menu = True
         shopping = True
@@ -392,21 +437,24 @@ class Game:
         arrow_pos = {1: HEIGHT / 3,
                      2: HEIGHT / 3 + 50,
                      3: HEIGHT / 3 + 100}
+        # Selection arrow for menu
+        font = pg.font.Font(self.hud_font, 30)
+        self.selection_arrow = font.render("oxx{=======-", True, WHITE)
+        self.selection_arrow_rect = self.selection_arrow.get_rect()
+        self.draw_menu()
+                     
         while shopping:
+            #TODO: REMOVE
+            self.selection_arrow_rect.center = (WIDTH / 2 - 300, arrow_pos[self.current_choice])
             self.draw()
-            self.draw_text("What would you like?", self.hud_font, 45, WHITE, WIDTH / 2, 50, align="center")
-            self.draw_text("Potion                    10 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3, align="center")
-            self.draw_text("Revolver            150 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3 + 50, align="center")
-            self.draw_text("Cloak                     100 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3 + 100, align="center")
+            
             # Selection arrow
-            self.draw_text("oxx{=======-", self.hud_font, 30, WHITE, WIDTH / 2 - 300, arrow_pos[self.current_choice], align="center")
-            pg.display.flip()
+            # self.draw_text("oxx{=======-", self.hud_font, 30, WHITE, WIDTH / 2 - 300, arrow_pos[self.current_choice], align="center")
+            # pg.display.flip()
             choice = self.wait_for_menu_keys()
             if choice == 0:
                 shopping = False
-            elif choice == 'selection':
-                pass
-            else:
+            elif choice != 'selection':
                 if items[choice]['price'] > self.player.wallet:
                     self.draw()
                     self.draw_text("You appear to not have the funds for that", 
@@ -478,11 +526,16 @@ class Game:
                         waiting = False
                         return 0
                     if event.key == pg.K_UP:
-                        self.current_choice -= 1
+                        if self.current_choice > 1:
+                            self.current_choice -= 1
+                        else:
+                            self.current_choice = 3
                         return 'selection'
-                        
                     if event.key == pg.K_DOWN:
-                        self.current_choice += 1
+                        if self.current_choice < 3:
+                            self.current_choice += 1
+                        else:
+                            self.current_choice = 1
                         return 'selection'
                         
     
