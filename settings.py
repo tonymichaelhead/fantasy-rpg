@@ -81,6 +81,7 @@ DETECT_RADIUS = 500
 SKELETON_MOB_SPEEDS = [25, 50, 75, 100] 
 SKELETON_MOB_HEALTH = 40
 SKELETON_EXP = 10
+GOLD_DROP_PROBABILITY = 0.2
 
 # NPC settings
 NPC_SPRITESHEET = '32-npc.png'
@@ -125,7 +126,9 @@ WEAPON_SOUNDS = {'pistol': ['sfx_weapon_singleshot2.wav'],
                  'shotgun': ['shotgun.wav']}
 EFFECTS_SOUNDS = {'level_start': 'level_start.wav',
                   'health_up': 'health_pack.wav',
-                  'gun_pickup': 'gun_pickup.wav'}
+                  'gun_pickup': 'gun_pickup.wav',
+                  'gold_drop': 'metal_falling_02.ogg',
+                  'gold_drop_2': 'tools_10.ogg'}
 ATTACK_SOUNDS = {'punch': ['jump1.ogg']}
 
 
