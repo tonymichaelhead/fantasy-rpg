@@ -565,6 +565,8 @@ class SkeletonMob(pg.sprite.Sprite):
             self.kill()
             self.game.player.exp += SKELETON_EXP
             self.game.map_img.blit(self.game.skeleton_parts, self.pos - vec(32, 32))
+            # TODO: create Gold class with randomized sizes and values. Play sound, and randomize which mobs drop gold (1/2 time etc)
+            self.game.map_img.blit(self.game.gold_md_lg, self.pos)
         self.image = self.image.copy() # A copy seems to need to be made for damage
         if self.damaged:
             try:

@@ -131,6 +131,7 @@ class Game:
         self.mob_spritesheet = SpriteSheet(path.join(img_folder, MOB_SPRITESHEET))
         self.skeleton_parts_spritesheet = SpriteSheet(path.join(img_folder, SKELETON_PARTS_SPRITESHEET))
         self.npc_spritesheet = SpriteSheet(path.join(img_folder, NPC_SPRITESHEET))
+        self.gold_spritesheet = SpriteSheet(path.join(img_folder, GOLD_SPRITESHEET))
         self.map_folder = path.join(game_folder, 'maps')
         self.title_font = path.join(img_folder, 'ZOMBIE.TTF')
         self.hud_font = path.join(img_folder, 'Impacted2.0.ttf')
@@ -146,6 +147,8 @@ class Game:
         self.splat = pg.image.load(path.join(img_folder, SPLAT)).convert_alpha()
         self.splat = pg.transform.scale(self.splat, (64, 64))
         self.skeleton_parts = self.skeleton_parts_spritesheet.get_image(137, 256, 55, 57)
+        # Gold images TODO: Refactor into own class
+        self.gold_md_lg = self.gold_spritesheet.get_image(105, 39, 15, 17)
         self.gun_flashes = []
         for img in MUZZLE_FLASHES:
             self.gun_flashes.append(pg.image.load(path.join(img_folder, img)).convert_alpha())
@@ -344,10 +347,11 @@ class Game:
             self.render_fog()
         if self.merchant_menu:
             self.screen.blit(self.dim_screen, (0, 0))
-            self.screen.blit(self.selection_arrow, self.selection_arrow_rect)
-            self.screen.blit(self.menu_title, self.menu_title_rect)
-            for i, choice in enumerate(self.menu_choices):
-                self.screen.blit(self.menu_choices[i], self.menu_choice_rects[i]) 
+            if self.show_choices:
+                self.screen.blit(self.selection_arrow, self.selection_arrow_rect)
+                self.screen.blit(self.menu_title, self.menu_title_rect)
+                for i, choice in enumerate(self.menu_choices):
+                    self.screen.blit(self.menu_choices[i], self.menu_choice_rects[i]) 
             
         # *after* drawing everything, flip the display
         # HUD functions
@@ -440,7 +444,7 @@ class Game:
                  2: {'name': 'Cloak', 'price': 100}}
         # For stores and hotels where item and service transactions occur
         self.merchant_menu = True
-        shopping = True
+        self.show_choices = True
         self.current_choice = 0
         arrow_pos = {0: HEIGHT / 3,
                      1: HEIGHT / 3 + 50,
@@ -451,7 +455,7 @@ class Game:
         self.selection_arrow_rect = self.selection_arrow.get_rect()
         self.draw_menu()
                      
-        while shopping:
+        while self.show_choices:
             #TODO: REMOVE
             self.selection_arrow_rect.center = (WIDTH / 2 - 300, arrow_pos[self.current_choice])
             self.draw()
@@ -461,16 +465,18 @@ class Game:
             # pg.display.flip()
             choice = self.wait_for_menu_keys()
             if choice == 'cancel':
-                shopping = False
+                self.show_choices = False
             elif choice != 'selection':
                 if items[choice]['price'] > self.player.wallet:
+                    self.show_choices = False
                     self.draw()
                     self.draw_text("You appear to not have the funds for that", 
                                    self.hud_font, 45, WHITE, WIDTH / 2, HEIGHT / 2, align="center")
                     pg.display.flip()
                     self.wait_for_key()
-                else: 
-                    shopping = False
+                    self.show_choices = True
+                else:
+                    self.show_choices = False
         # Show confirmation message on purchase
         if choice == 'cancel':
             confirmation_message = "Thanks for stopping by"
@@ -530,7 +536,7 @@ class Game:
                     if event.key == pg.K_3:
                         waiting = False
                         return 2
-                    if event.key == pg.K_z:
+                    if event.key == pg.K_ESCAPE:
                         waiting = False
                         return 'cancel'
                     if event.key == pg.K_UP:
@@ -545,7 +551,8 @@ class Game:
                         else:
                             self.current_choice = 0
                         return 'selection'
-                        
+                    if event.key == pg.K_LCTRL or event.key == pg.K_RCTRL:
+                        return self.current_choice    
     
 g = Game()
 g.show_start_screen()
