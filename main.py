@@ -273,6 +273,11 @@ class Game:
                 hit.kill()
                 self.effects_sounds['gun_pickup'].play()
                 self.player.weapon = 'shotgun'
+            if hit.type =='gold':
+                hit.kill()
+                # Play gold pickup sound
+                self.effects_sounds['gold_pickup'].play()
+                self.player.wallet += hit.value
         
         # Player hits exits
         hits = pg.sprite.spritecollide(self.player, self.exits, False)

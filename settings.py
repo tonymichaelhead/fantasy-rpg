@@ -128,7 +128,8 @@ EFFECTS_SOUNDS = {'level_start': 'level_start.wav',
                   'health_up': 'health_pack.wav',
                   'gun_pickup': 'gun_pickup.wav',
                   'gold_drop': 'metal_falling_02.ogg',
-                  'gold_drop_2': 'tools_10.ogg'}
+                  'gold_drop_2': 'tools_10.ogg',
+                  'gold_pickup': 'keys_05.ogg'}
 ATTACK_SOUNDS = {'punch': ['jump1.ogg']}
 
 

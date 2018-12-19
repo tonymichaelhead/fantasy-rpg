@@ -567,7 +567,7 @@ class SkeletonMob(pg.sprite.Sprite):
             self.game.map_img.blit(self.game.skeleton_parts, self.pos - vec(32, 32))
             # TODO: create Gold class with randomized sizes and values. Play sound, and randomize which mobs drop gold (1/2 time etc)
             if random() < GOLD_DROP_PROBABILITY:
-                self.game.map_img.blit(self.game.gold_md_lg, self.pos)
+                Gold(self.game, self.pos, 'md-lg')
                 self.game.effects_sounds['gold_drop'].play()
         self.image = self.image.copy() # A copy seems to need to be made for damage
         if self.damaged:
@@ -780,11 +780,19 @@ class Item(pg.sprite.Sprite):
         self.step = 0
         self.dir = 1
 
+class Gold(pg.sprite.Sprite):
+    def __init__(self, game, pos, size):
+        self._layer = ITEMS_LAYER
+        self.groups = game.all_sprites, game.items
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.type = 'gold'
+        self.value = choice([i for i in range(5, 30, 3)])
+        self.image = self.game.gold_md_lg
+        self.rect = self.image.get_rect()
+        self.size = size
+        self.pos = pos
+        self.rect.center = pos
+
     def update(self):
-        # Bobbing motion
-        offset = BOB_RANGE * (self.tween(self.step / BOB_RANGE) - 0.5)
-        self.rect.centery = self.pos.y + offset * self.dir
-        self.step += BOB_SPEED
-        if self.step > BOB_RANGE:
-            self.step = 0
-            self.dir *= -1
+        pass
