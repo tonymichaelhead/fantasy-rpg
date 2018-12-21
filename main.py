@@ -356,8 +356,10 @@ class Game:
                 self.screen.blit(self.selection_arrow, self.selection_arrow_rect)
                 self.screen.blit(self.menu_title, self.menu_title_rect)
                 for i, choice in enumerate(self.menu_choices):
-                    self.screen.blit(self.menu_choices[i], self.menu_choice_rects[i]) 
-            
+                    self.screen.blit(self.menu_choices[i], self.menu_choice_rects[i])
+        if self.player.talking:
+            # self.screen.blit(self.dim_screen, (0, 0))
+            pass
         # *after* drawing everything, flip the display
         # HUD functions
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)

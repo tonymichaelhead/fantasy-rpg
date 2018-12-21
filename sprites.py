@@ -73,6 +73,7 @@ class  Player(pg.sprite.Sprite):
         self.shooting = False
         self.attacking = False
         self.recovering = False
+        self.talking = False
         self.facing = 'back'
         self.current_frame = 0
         self.last_update = 0
@@ -268,17 +269,21 @@ class  Player(pg.sprite.Sprite):
             if hits[0].is_merchant:
                 self.game.show_merchant_menu()
             else:
+                self.talking = True
                 if not hits[0].talked_to:
                     for line in hits[0].dialogue_1:
                         self.game.draw_dialogue(line)
                         pg.display.flip()
                         self.game.wait_for_key()
+                        self.game.draw()
                     hits[0].talked_to = True
                 else:
                     for line in hits[0].dialogue_2:
                         self.game.draw_dialogue(line)
                         pg.display.flip()
                         self.game.wait_for_key()
+                        self.game.draw()
+                self.talking = False
 
     def hit(self):
         self.damaged = True
