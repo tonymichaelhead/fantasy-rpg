@@ -5,6 +5,7 @@
   <terrain name="Bare Ground" tile="158"/>
   <terrain name="Water" tile="68"/>
  </terraintypes>
+ <tile id="23" terrain="0,,,"/>
  <tile id="51" terrain=",,,1"/>
  <tile id="52" terrain=",,1,1"/>
  <tile id="53" terrain=",,1,"/>
