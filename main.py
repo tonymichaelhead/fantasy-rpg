@@ -416,9 +416,7 @@ class Game:
         self.map_rect = self.map_img.get_rect()
         for tile_object in self.map.tmxdata.objects:
             obj_center = vec(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
-            if tile_object.name == 'player':
-                self.player.pos.x = float(spawn_player_x) 
-                self.player.pos.y = float(spawn_player_y)
+            # if tile_object.name == 'player':
             if tile_object.name == 'zombie':
                 Mob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'skeleton':
@@ -435,6 +433,8 @@ class Game:
             if tile_object.name in ['health', 'shotgun']:
                 Item(self, obj_center, tile_object.name)
         self.camera = Camera(self.map.width, self.map.height)
+        self.player.pos.x = float(spawn_player_x) 
+        self.player.pos.y = float(spawn_player_y)
         self.draw_debug = False
         # self.effects_sounds['level_start'].play()
         self.paused = False
