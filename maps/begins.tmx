@@ -498,12 +498,12 @@
     <property name="spawn_player_y" type="float" value="160"/>
    </properties>
   </object>
-  <object id="18" name="exit" x="938" y="2831" width="113" height="16">
+  <object id="18" name="exit" x="938" y="2852" width="113" height="21">
    <properties>
     <property name="map_file" value="world-map.tmx"/>
     <property name="music_file" value="Woodland Fantasy.mp3"/>
-    <property name="spawn_player_x" value="500"/>
-    <property name="spawn_player_y" value="500"/>
+    <property name="spawn_player_x" value="2772"/>
+    <property name="spawn_player_y" value="1686"/>
    </properties>
   </object>
   <object id="20" name="npc" x="895" y="2705" width="30" height="29">

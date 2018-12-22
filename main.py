@@ -421,7 +421,7 @@ class Game:
                 Mob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'skeleton':
                 SkeletonMob(self, obj_center.x, obj_center.y)
-            if tile_object.name == 'npc':
+            if tile_object.name == 'npc': # TODO: Check if npc has already been creating before creating a new one
                 Npc(self, tile_object.npc_name, tile_object.mode, tile_object.facing, obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
