@@ -7,6 +7,7 @@ import random
 from settings import *
 from sprites import *
 from tilemap import *
+from special_npcs import *
 
 # HUD functions
 def draw_player_health(surf, x, y, pct):
@@ -220,6 +221,10 @@ class Game:
                 SkeletonMob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'npc':
                 Npc(self, tile_object.npc_name, tile_object.mode, tile_object.facing, obj_center.x, obj_center.y)
+            if tile_object.name == 'special_npc':
+                special_npcs[tile_object.npc_name](self, tile_object.npc_name, 
+                                                   tile_object.mode, tile_object.facing, 
+                                                   obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)
@@ -236,6 +241,9 @@ class Game:
         self.merchant_menu = False
         self.night = False
         # self.effects_sounds['level_start'].play()
+
+        # Quest variables
+        self.brother_found = False
 
 
     def run(self):
@@ -421,8 +429,13 @@ class Game:
                 Mob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'skeleton':
                 SkeletonMob(self, obj_center.x, obj_center.y)
-            if tile_object.name == 'npc': # TODO: Check if npc has already been creating before creating a new one
+            if tile_object.name == 'npc' and not any(npc.char_name == tile_object.name for npc in self.npcs): 
                 Npc(self, tile_object.npc_name, tile_object.mode, tile_object.facing, obj_center.x, obj_center.y)
+            if tile_object.name == 'special_npc':
+                print(tile_object.npc_name)
+                special_npcs[tile_object.npc_name](self, tile_object.npc_name, 
+                                                   tile_object.mode, tile_object.facing, 
+                                                   obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)

@@ -1,3 +1,4 @@
+
 # Hometown NPCs
 MOUNTAIN_ENTRANCE_BOY = {'dialogue_1': ["You really shouldn't go in there..."],
                          'dialogue_2': ["I told you once, aint gonna say it again"],
@@ -19,6 +20,9 @@ GIRL_HOME             = {'dialogue_1': ["Tony! Thank goodness your here. It's my
                                         "I'm worried something may have happenend to him...",
                                         "Please find him and bring him home safe."],
                         'dialogue_2': ["You must be very careful, there are lots of monsters out there!."],
+                        'found_dialogue_1': ["You found him!!.",
+                                       "Thank you so much for bringing him back home safe."],
+                        'found_dialogue_2': ["How can I ever repay you..."],
                         'is_merchant': False,
                         'standing_frame_b': {'x': 4, 'y': 64, 'w': 24, 'h': 32, 'scale': (36, 48)},
                         'standing_frame_f': {'x': 68, 'y': 64, 'w': 24, 'h': 32, 'scale': (36, 48)}, 
@@ -59,3 +63,5 @@ NPCS = {'mountain_entrance_boy': MOUNTAIN_ENTRANCE_BOY,
         'merchant_geezer': MERCHANT_GEEZER,
         'princess': PRINCESS,
         'brother': BROTHER,}
+
+     

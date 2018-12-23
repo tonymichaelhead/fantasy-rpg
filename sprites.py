@@ -266,25 +266,9 @@ class  Player(pg.sprite.Sprite):
     def talk(self):
         hits = pg.sprite.spritecollide(self, self.game.npcs, False)
         if hits:
-            if hits[0].is_merchant:
-                self.game.show_merchant_menu()
-            else:
-                self.talking = True
-                if not hits[0].talked_to:
-                    for line in hits[0].dialogue_1:
-                        self.game.draw_dialogue(line)
-                        pg.display.flip()
-                        self.game.wait_for_key()
-                        self.game.draw()
-                    hits[0].talked_to = True
-                else:
-                    for line in hits[0].dialogue_2:
-                        self.game.draw_dialogue(line)
-                        pg.display.flip()
-                        self.game.wait_for_key()
-                        self.game.draw()
-                self.talking = False
-
+            # If there is a collision, run the talk method on the NPC
+            hits[0].talk()
+            
     def hit(self):
         self.damaged = True
         self.damage_alpha = chain(DAMAGE_ALPHA * 4)
@@ -645,6 +629,26 @@ class Npc(pg.sprite.Sprite):
             self.wander()
         else:
             self.post()
+    
+    def talk(self):
+        if self.is_merchant:
+            self.game.show_merchant_menu()
+        else:
+            self.game.player.talking = True
+            if not self.talked_to:
+                for line in self.dialogue_1:
+                    self.game.draw_dialogue(line)
+                    pg.display.flip()
+                    self.game.wait_for_key()
+                    self.game.draw()
+                self.talked_to = True
+            else:
+                for line in self.dialogue_2:
+                    self.game.draw_dialogue(line)
+                    pg.display.flip()
+                    self.game.wait_for_key()
+                    self.game.draw()
+            self.game.player.talking = False
 
     def post(self):
         # Animation for standing

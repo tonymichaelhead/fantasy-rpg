@@ -520,7 +520,7 @@
     <property name="npc_name" value="mountain_entrance_boy"/>
    </properties>
   </object>
-  <object id="23" name="npc" x="2054" y="2328" width="30" height="29">
+  <object id="23" name="special_npc" x="2054" y="2328" width="30" height="29">
    <properties>
     <property name="facing" value="left"/>
     <property name="mode" value="wandering"/>
