@@ -172,7 +172,7 @@
   <object id="315" name="skeleton" x="1419" y="815" width="36" height="34"/>
   <object id="316" name="skeleton" x="1458" y="1062" width="36" height="34"/>
   <object id="317" name="skeleton" x="1641" y="1154" width="36" height="34"/>
-  <object id="319" name="npc" x="2843" y="648" width="30" height="29">
+  <object id="319" name="special_npc" x="2843" y="648" width="30" height="29">
    <properties>
     <property name="facing" value="left"/>
     <property name="mode" value="posting"/>
