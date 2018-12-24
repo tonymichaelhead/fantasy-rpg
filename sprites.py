@@ -629,6 +629,7 @@ class Npc(pg.sprite.Sprite):
             self.wander()
         else:
             self.post()
+        self.rect.center = self.pos
     
     def talk(self):
         if self.is_merchant:

@@ -243,7 +243,6 @@ class Game:
         # self.effects_sounds['level_start'].play()
 
         # Quest variables
-        self.brother_found = False
 
 
     def run(self):
@@ -410,6 +409,7 @@ class Game:
     
     def change_map(self, map_file, music_file, spawn_player_x, spawn_player_y):
         # Load new map, pass current game state to change maps mid game
+        print('change map called')
         self.all_sprites.empty()
         self.all_sprites.add(self.player)
         self.walls.empty()
@@ -422,6 +422,8 @@ class Game:
         self.map_img = self.map.make_map()
         self.map_img = pg.transform.scale(self.map_img, (self.map.width, self.map.height))
         self.map_rect = self.map_img.get_rect()
+        # for npc in self.npcs:
+        #     print(npc.char_name)
         for tile_object in self.map.tmxdata.objects:
             obj_center = vec(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
             # if tile_object.name == 'player':
@@ -429,13 +431,26 @@ class Game:
                 Mob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'skeleton':
                 SkeletonMob(self, obj_center.x, obj_center.y)
-            if tile_object.name == 'npc' and not any(npc.char_name == tile_object.name for npc in self.npcs): 
-                Npc(self, tile_object.npc_name, tile_object.mode, tile_object.facing, obj_center.x, obj_center.y)
+            if tile_object.name == 'npc':
+                print(tile_object.npc_name)    
+            if tile_object.name == 'npc':
+                # Instantiate character, or locate if already exists and add back to all_sprites
+                existing_sprite = next((npc for npc in self.npcs if npc.char_name == tile_object.npc_name), None)
+                if existing_sprite != None:
+                    self.all_sprites.add(existing_sprite)
+                    self.walls.add(existing_sprite)
+                else:
+                    Npc(self, tile_object.npc_name, tile_object.mode, tile_object.facing, obj_center.x, obj_center.y)
             if tile_object.name == 'special_npc':
-                print(tile_object.npc_name)
-                special_npcs[tile_object.npc_name](self, tile_object.npc_name, 
-                                                   tile_object.mode, tile_object.facing, 
-                                                   obj_center.x, obj_center.y)
+                # Instantiate character, or locate if already exists and add back to all_sprites
+                existing_sprite = next((npc for npc in self.npcs if npc.char_name == tile_object.npc_name), None)
+                if existing_sprite != None:
+                    self.all_sprites.add(existing_sprite)
+                    self.walls.add(existing_sprite)
+                else:
+                    special_npcs[tile_object.npc_name](self, tile_object.npc_name, 
+                                                    tile_object.mode, tile_object.facing, 
+                                                    obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, 
                          tile_object.width, tile_object.height)
