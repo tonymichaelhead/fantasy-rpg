@@ -98,6 +98,13 @@ class  Player(pg.sprite.Sprite):
         self.health = PLAYER_HEALTH
         self.weapon = 'pistol'
         self.damaged = False
+        # Player Inventory/Items
+        self.inventory = [{'name': 'potion'}, {'name': 'potion'}, {'name': 'ether'}]
+        self.weapons = [{'name': 'pistol'}, {'name': 'shotgun'}]
+        self.quests = [{'name': "Find girls brother in the forest and bring him to her",
+                        'main_quest': True,
+                        'active': True,
+                        'completed': False}]
     
     def load_images(self):
         # Standing
@@ -164,26 +171,47 @@ class  Player(pg.sprite.Sprite):
         self.rot_speed = 0
         self.vel = vec(0, 0)
         keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT] or keys[pg.K_a]:
+        
+        if keys[pg.K_LEFT] and keys[pg.K_UP] or keys[pg.K_a] and keys[pg.K_w]:
             if not self.recovering:
                 self.walking = True
                 self.facing = 'left'
-                self.vel = vec(-PLAYER_SPEED, 0).rotate(-self.rot)
+                self.vel = vec(-PLAYER_SPEED, -PLAYER_SPEED) * 0.7071
+        elif keys[pg.K_LEFT] and keys[pg.K_DOWN] or keys[pg.K_a] and keys[pg.K_r]:
+            if not self.recovering:
+                self.walking = True
+                self.facing = 'left'
+                self.vel = vec(-PLAYER_SPEED, PLAYER_SPEED) * 0.7071
+        elif keys[pg.K_LEFT] or keys[pg.K_a]:
+            if not self.recovering:
+                self.walking = True
+                self.facing = 'left'
+                self.vel = vec(-PLAYER_SPEED, 0)
+        elif keys[pg.K_RIGHT] and keys[pg.K_UP] or keys[pg.K_s] and keys[pg.K_w]:
+            if not self.recovering:
+                self.walking = True
+                self.facing = 'right'
+                self.vel = vec(PLAYER_SPEED, -PLAYER_SPEED) * 0.7071
+        elif keys[pg.K_RIGHT] and keys[pg.K_DOWN] or keys[pg.K_s] and keys[pg.K_r]:
+            if not self.recovering:
+                self.walking = True
+                self.facing = 'right'
+                self.vel = vec(PLAYER_SPEED, PLAYER_SPEED) * 0.7071
         elif keys[pg.K_RIGHT] or keys[pg.K_s]:
             if not self.recovering:
                 self.walking = True
                 self.facing = 'right'
-                self.vel = vec(PLAYER_SPEED, 0).rotate(-self.rot)
+                self.vel = vec(PLAYER_SPEED, 0)
         elif keys[pg.K_UP] or keys[pg.K_w]:
             if not self.recovering:
                 self.walking = True
                 self.facing = 'forward'
-                self.vel = vec(0, -PLAYER_SPEED).rotate(-self.rot)
+                self.vel = vec(0, -PLAYER_SPEED)
         elif keys[pg.K_DOWN] or keys[pg.K_r]:
             if not self.recovering:
                 self.walking = True
                 self.facing = 'back'
-                self.vel = vec(0, PLAYER_SPEED).rotate(-self.rot)
+                self.vel = vec(0, PLAYER_SPEED)
         else:
             self.walking = False
         if keys[pg.K_1]:

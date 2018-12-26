@@ -27,6 +27,15 @@ def draw_player_health(surf, x, y, pct):
     pg.draw.rect(surf, col, fill_rect)
     pg.draw.rect(surf, WHITE, outline_rect, 2)
 
+def make_hist(dic):
+    hist = {}
+    for item in dic:
+        if item['name'] in hist:
+            hist[item['name']] += 1
+        else:
+            hist[item['name']] = 1
+    return hist
+
 class Game:
     def __init__(self):
         # Initialize game window, etc
@@ -148,7 +157,6 @@ class Game:
         self.splat = pg.image.load(path.join(img_folder, SPLAT)).convert_alpha()
         self.splat = pg.transform.scale(self.splat, (64, 64))
         self.skeleton_parts = self.skeleton_parts_spritesheet.get_image(137, 256, 55, 57)
-        # Gold images TODO: Refactor into own class
         self.gold_md_lg = self.gold_spritesheet.get_image(105, 39, 15, 17)
         self.gun_flashes = []
         for img in MUZZLE_FLASHES:
@@ -237,7 +245,7 @@ class Game:
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
         # self.effects_sounds['level_start'].play()
-        self.paused = False
+        self.in_game_menu = False
         self.merchant_menu = False
         self.night = False
         # self.effects_sounds['level_start'].play()
@@ -252,7 +260,7 @@ class Game:
         while self.playing:
             self.dt = self.clock.tick(FPS) / 1000
             self.events()
-            if not self.paused:
+            if not self.in_game_menu:
                 self.update()
             self.draw()
     
@@ -364,22 +372,56 @@ class Game:
                 self.screen.blit(self.menu_title, self.menu_title_rect)
                 for i, choice in enumerate(self.menu_choices):
                     self.screen.blit(self.menu_choices[i], self.menu_choice_rects[i])
-        if self.player.talking:
-            # self.screen.blit(self.dim_screen, (0, 0))
-            pass
+        
+        # Draw in game menu
+        if self.in_game_menu:
+            self.screen.blit(self.dim_screen, (0, 0))
+            # Draw side bar
+            self.draw_text("Summary/Stats", self.hud_font, 22, WHITE, self.choices[0]['pos'].x, self.choices[0]['pos'].y, align="w")
+            self.draw_text("Inventory", self.hud_font, 22, WHITE, self.choices[1]['pos'].x, self.choices[1]['pos'].y, align="w")
+            self.draw_text("Weapons", self.hud_font, 22, WHITE, self.choices[2]['pos'].x, self.choices[2]['pos'].y, align="w")
+            self.draw_text("Quests", self.hud_font, 22, WHITE, self.choices[3]['pos'].x, self.choices[3]['pos'].y, align="w")
+            
+            self.draw_text("Gold: {}".format(self.player.wallet), self.hud_font, 30, WHITE, WIDTH - 50, HEIGHT - 50, align="e")
+
+            if self.current_choice == 0:
+                self.draw_text("Summary/Stats", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
+                self.draw_text("Lvl: {}".format(self.player.level), self.hud_font, 30, WHITE, 
+                               WIDTH / 3 - 10, HEIGHT / 3 + 10, align="w")
+                self.draw_text("Exp. to next level: {}/100".format(self.player.exp), self.hud_font, 30, WHITE, 
+                               WIDTH / 3 - 10, HEIGHT / 3 + 40, align="w")
+                self.draw_text("Max HP: {}".format(self.player.health), self.hud_font, 30, WHITE, 
+                               WIDTH / 3 - 10, HEIGHT / 3 + 70, align="w")
+                self.draw_text("Max MP: {}".format(40), self.hud_font, 30, WHITE, 
+                               WIDTH / 3 - 10, HEIGHT / 3 + 100, align="w")
+                self.draw_text("Attack: {}".format(12), self.hud_font, 30, WHITE, 
+                               WIDTH / 3 - 10, HEIGHT / 3 + 130, align="w")
+                
+            if self.current_choice == 1:
+                self.draw_text("Inventory", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
+                inventory_hist = make_hist(self.player.inventory)
+                for i,item in enumerate(inventory_hist):
+                    self.draw_text(item + " x" + str(inventory_hist[item]), self.hud_font, 30, WHITE, 
+                            WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
+            if self.current_choice == 2:
+                self.draw_text("Weapons", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
+                weapon_hist = make_hist(self.player.weapons)
+                for i,weapon in enumerate(weapon_hist):
+                    self.draw_text(weapon, self.hud_font, 30, WHITE, 
+                            WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
+            if self.current_choice == 3:
+                self.draw_text("Quests", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
+                for i,quest in enumerate(self.player.quests):
+                    self.draw_text(quest['name'], self.hud_font, 30, WHITE, 
+                            WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
+            # Draw selection arrow at current choice
+            self.selection_arrow_rect.center = (self.choices[self.current_choice]['pos'].x - 20,
+                                                self.choices[self.current_choice]['pos'].y)
+            self.screen.blit(self.selection_arrow, self.selection_arrow_rect)
+            
         # *after* drawing everything, flip the display
         # HUD functions
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
-        self.draw_text("Lvl: {}".format(self.player.level), self.hud_font, 30, WHITE, 
-                       WIDTH - 10, 10, align="ne")
-        self.draw_text("Exp: {}".format(self.player.exp), self.hud_font, 30, WHITE, 
-                       WIDTH - 10, 40, align="ne")
-        self.draw_text("Gold: {}".format(self.player.wallet), self.hud_font, 30, WHITE, 
-                       WIDTH - 10, 70, align="ne")
-
-        if self.paused:
-            self.screen.blit(self.dim_screen, (0, 0))
-            self.draw_text("Paused", self.title_font, 105, RED, WIDTH / 2, HEIGHT / 2, align="center")
         
         pg.display.flip()
 
@@ -395,7 +437,7 @@ class Game:
                 if event.key ==pg.K_h:
                     self.draw_debug = not self.draw_debug
                 if event.key == pg.K_p:
-                    self.paused = not self.paused
+                    self.show_in_game_menu()
                 if event.key == pg.K_n:
                     self.night = not self.night
                 if event.key == pg.K_RCTRL or event.key ==pg.K_LCTRL:
@@ -409,7 +451,6 @@ class Game:
     
     def change_map(self, map_file, music_file, spawn_player_x, spawn_player_y):
         # Load new map, pass current game state to change maps mid game
-        print('change map called')
         self.all_sprites.empty()
         self.all_sprites.add(self.player)
         self.walls.empty()
@@ -422,8 +463,8 @@ class Game:
         self.map_img = self.map.make_map()
         self.map_img = pg.transform.scale(self.map_img, (self.map.width, self.map.height))
         self.map_rect = self.map_img.get_rect()
-        # for npc in self.npcs:
-        #     print(npc.char_name)
+        
+        # Load map objects TODO: Refactor into method to be used in the new() method as well
         for tile_object in self.map.tmxdata.objects:
             obj_center = vec(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
             # if tile_object.name == 'player':
@@ -431,8 +472,6 @@ class Game:
                 Mob(self, obj_center.x, obj_center.y)
             if tile_object.name == 'skeleton':
                 SkeletonMob(self, obj_center.x, obj_center.y)
-            if tile_object.name == 'npc':
-                print(tile_object.npc_name)    
             if tile_object.name == 'npc':
                 # Instantiate character, or locate if already exists and add back to all_sprites
                 existing_sprite = next((npc for npc in self.npcs if npc.char_name == tile_object.npc_name), None)
@@ -460,17 +499,37 @@ class Game:
                      tile_object.width, tile_object.height)
             if tile_object.name in ['health', 'shotgun']:
                 Item(self, obj_center, tile_object.name)
+        
         self.camera = Camera(self.map.width, self.map.height)
         self.player.pos.x = float(spawn_player_x) 
         self.player.pos.y = float(spawn_player_y)
         self.draw_debug = False
         # self.effects_sounds['level_start'].play()
-        self.paused = False
+        self.in_game_menu = False
         self.night = False
 
         # Kill old BGM and load new map music
         pg.mixer.music.load(path.join(self.music_folder, music_file))
         pg.mixer.music.play(loops=-1)
+    
+    def show_in_game_menu(self):
+        self.current_choice = 0
+        self.in_game_menu = True
+
+        self.choices = {0: {'pos': vec(50, HEIGHT / 3)},
+                        1: {'pos': vec(50, HEIGHT / 3 + 60)},
+                        2: {'pos': vec(50, HEIGHT / 3 + 120)},
+                        3: {'pos': vec(50, HEIGHT / 3 + 180)}}
+        
+        font = pg.font.Font(self.hud_font, 30)
+        self.selection_arrow = font.render(">", True, WHITE)
+        self.selection_arrow_rect = self.selection_arrow.get_rect()
+        while self.in_game_menu:
+            self.draw()
+            choice = self.wait_for_menu_keys(self.choices)
+            # Handle menu choices
+            if choice == 'cancel':
+                self.in_game_menu = False
 
     def show_merchant_menu(self):
         # TODO: Move to npc_data
@@ -491,14 +550,10 @@ class Game:
         self.draw_menu()
                      
         while self.show_choices:
-            #TODO: REMOVE
+            # Selection arrow
             self.selection_arrow_rect.center = (WIDTH / 2 - 300, arrow_pos[self.current_choice])
             self.draw()
-            
-            # Selection arrow
-            # self.draw_text("oxx{=======-", self.hud_font, 30, WHITE, WIDTH / 2 - 300, arrow_pos[self.current_choice], align="center")
-            # pg.display.flip()
-            choice = self.wait_for_menu_keys()
+            choice = self.wait_for_menu_keys(items)
             if choice == 'cancel':
                 self.show_choices = False
             elif choice != 'selection':
@@ -552,7 +607,7 @@ class Game:
                 if event.type == pg.KEYUP:
                     waiting = False
     
-    def wait_for_menu_keys(self):
+    def wait_for_menu_keys(self, choices):
         pg.event.wait()
         waiting = True
         while waiting:
@@ -571,6 +626,9 @@ class Game:
                     if event.key == pg.K_3:
                         waiting = False
                         return 2
+                    if event.key == pg.K_4:
+                        waiting = False
+                        return 1
                     if event.key == pg.K_ESCAPE:
                         waiting = False
                         return 'cancel'
@@ -578,10 +636,10 @@ class Game:
                         if self.current_choice > 0:
                             self.current_choice -= 1
                         else:
-                            self.current_choice = 2
+                            self.current_choice = len(choices) - 1
                         return 'selection'
                     if event.key == pg.K_DOWN:
-                        if self.current_choice < 2:
+                        if self.current_choice < len(choices) - 1:
                             self.current_choice += 1
                         else:
                             self.current_choice = 0
