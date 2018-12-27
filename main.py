@@ -582,6 +582,8 @@ class Game:
         self.merchant_menu = False
 
     def show_level_up(self):
+        pg.mixer.music.pause()
+        self.effects_sounds['level_up'].play()
         self.screen.blit(self.dim_screen, (0, 0))
         # Draw side bar
         self.draw_text("You leveled up!", self.hud_font, 45, WHITE, 
@@ -597,7 +599,13 @@ class Game:
         self.draw_text("Attack: {}".format(self.player.stats['attack']), self.hud_font, 30, WHITE, 
                         WIDTH / 3, HEIGHT / 3 + 170, align="w")
         pg.display.flip()
-        self.wait_for_key()
+        pg.time.delay(2000)
+        pg.event.clear()
+        pg.mixer.music.unpause()
+        pg.mixer.music.set_volume(0.1)
+        self.wait_for_confirm()
+        pg.mixer.music.set_volume(1)
+
     def show_start_screen(self):
         # Game splash/start screen
         pass
@@ -623,6 +631,20 @@ class Game:
                     self.quit()
                 if event.type == pg.KEYUP:
                     waiting = False
+
+    def wait_for_confirm(self):
+        pg.event.wait()
+        waiting = True
+        while waiting:
+            self.clock.tick(FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.quit()
+                if event.type == pg.KEYUP:
+                    if event.key == pg.K_RETURN:
+                        waiting = False
+
     
     def wait_for_menu_keys(self, choices):
         pg.event.wait()
