@@ -307,7 +307,7 @@ class Game:
             if self.player.attacking and not self.player.attack_success:
                 self.player.attack_buffer_start = now            
                 hit.hit()
-                hit.health -= ATTACK_DAMAGE
+                hit.health -= self.player.stats['attack']
                 hit.vel = vec(0, 0)
                 self.mob_hit_sound.play()
                 self.player.attack_success = True
@@ -332,7 +332,8 @@ class Game:
         for mob in hits:
             mob.hit()
             for bullet in hits[mob]:
-                mob.health -= bullet.damage
+                # mob.health -= bullet.damage TODO: Add bullet/weapon damage to players attack
+                mob.health -= self.player.stats['attack']
             mob.vel = vec(0, 0)
 
     def draw_grid(self):
@@ -394,7 +395,7 @@ class Game:
                                WIDTH / 3 - 10, HEIGHT / 3 + 70, align="w")
                 self.draw_text("Max MP: {}".format(40), self.hud_font, 30, WHITE, 
                                WIDTH / 3 - 10, HEIGHT / 3 + 100, align="w")
-                self.draw_text("Attack: {}".format(12), self.hud_font, 30, WHITE, 
+                self.draw_text("Attack: {}".format(self.player.stats['attack']), self.hud_font, 30, WHITE, 
                                WIDTH / 3 - 10, HEIGHT / 3 + 130, align="w")
                 
             if self.current_choice == 1:

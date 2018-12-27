@@ -32,7 +32,6 @@ PLAYER_INIT_MP = 20
 PLAYER_INIT_ATTACK = 5
 PLAYER_SPEED = 200
 ATTACK_FREQUENCY = 200
-ATTACK_DAMAGE = 5
 ATTACK_RECOVERY = 0
 ATTACK_BUFFER = 350 # After attacking, gives some 
 ATTACK_LUNGE = [5 for i in range(0, 7, 1)] + [-5 for i in range(0, 7, 1)]

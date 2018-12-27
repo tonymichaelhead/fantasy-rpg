@@ -233,7 +233,7 @@ class  Player(pg.sprite.Sprite):
             self.health += 10
             self.stats['max_mp'] += 3
             self.current_mp += 3
-            self.stats['attack'] += 4
+            self.stats['attack'] += 10
             self.game.show_level_up()
             if self.exp > 30:
                 remainder = self.exp - 30
