@@ -105,10 +105,7 @@ class  Player(pg.sprite.Sprite):
         # Player Inventory/Items
         self.inventory = [{'name': 'potion'}, {'name': 'potion'}, {'name': 'ether'}]
         self.weapons = [{'name': 'pistol'}, {'name': 'shotgun'}]
-        self.quests = [{'name': "Find girls brother in the forest and bring him to her",
-                        'main_quest': True,
-                        'active': True,
-                        'completed': False}]
+        self.quests = []
     
     def load_images(self):
         # Standing
@@ -228,15 +225,15 @@ class  Player(pg.sprite.Sprite):
 
     def calculateExp(self):
         # Calculate experience points and increment level
-        if self.exp >= 30:
+        if self.exp >= 100:
             self.stats['max_hp'] += 10
             self.health += 10
             self.stats['max_mp'] += 3
             self.current_mp += 3
             self.stats['attack'] += 10
             self.game.show_level_up()
-            if self.exp > 30:
-                remainder = self.exp - 30
+            if self.exp > 100:
+                remainder = self.exp - 100
             else:
                 remainder = 0
             self.level += 1
@@ -844,3 +841,32 @@ class Gold(pg.sprite.Sprite):
 
     def update(self):
         pass
+
+class Quest:
+    def __init__(self, game, player, name, main_quest):
+        self.game = game
+        self.player = player
+        self.name = name
+        self.main_quest = main_quest
+        self.active = False
+        self.completed = False
+    
+    # Show starting of quest alert and details
+    def start(self):
+        self.active = True
+        pg.mixer.music.pause()
+        self.game.effects_sounds['level_up'].play()
+        self.game.screen.blit(self.game.dim_screen, (0, 0))
+        # Draw side bar
+        self.game.draw_text("New Quest!", self.game.hud_font, 45, WHITE, 
+                        WIDTH / 2, HEIGHT / 3 - 50, align="center")
+        self.game.draw_text("-> {}".format(self.name), self.game.hud_font, 30, WHITE, 
+                        WIDTH / 2, HEIGHT / 3 + 50, align="center")
+        pg.display.flip()
+        pg.time.delay(2000)
+        pg.event.clear()
+        pg.mixer.music.unpause()
+        pg.mixer.music.set_volume(0.1)
+        self.game.wait_for_confirm()
+        pg.mixer.music.set_volume(1)
+

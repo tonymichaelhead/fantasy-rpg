@@ -1,6 +1,6 @@
-from sprites import Npc
-from npc_data import *
 import pygame as pg
+from npc_data import *
+from sprites import Npc, Quest 
 
 # Special character classes
 
@@ -27,8 +27,11 @@ class HomeGirl(Npc):
                 self.dialogue_2 = NPCS[self.char_name]['found_dialogue_2']
                 self.talked_to = False
             super().talk()
+            quest = Quest(self.game, self.game.player, "Find girl's brother", True)
+            self.game.player.quests.append(quest)
+            quest.start()
         else:
-            super().talk()    
+            super().talk()
 
 class Brother(Npc):
     def __init__(self, game, char_name, mode, facing, x, y):
