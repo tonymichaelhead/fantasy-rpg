@@ -280,7 +280,7 @@ class Game:
         # Player hits items
         hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
-            if hit.type == 'health' and self.player.health < PLAYER_HEALTH:
+            if hit.type == 'health' and self.player.health < self.player.stats['max_hp']:
                 hit.kill()
                 self.effects_sounds['health_up'].play()
                 self.player.add_health(HEALTH_PACK_AMOUNT)
@@ -374,7 +374,7 @@ class Game:
                     self.screen.blit(self.menu_choices[i], self.menu_choice_rects[i])
         
         # Draw in game menu
-        if self.in_game_menu:
+        if self.in_game_menu: #TODO: Refactor into a menu draw method
             self.screen.blit(self.dim_screen, (0, 0))
             # Draw side bar
             self.draw_text("Summary/Stats", self.hud_font, 22, WHITE, self.choices[0]['pos'].x, self.choices[0]['pos'].y, align="w")
@@ -421,7 +421,7 @@ class Game:
             
         # *after* drawing everything, flip the display
         # HUD functions
-        draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
+        draw_player_health(self.screen, 10, 10, self.player.health / self.player.stats['max_hp'])
         
         pg.display.flip()
 
@@ -581,6 +581,23 @@ class Game:
         self.wait_for_key()
         self.merchant_menu = False
 
+    def show_level_up(self):
+        self.screen.blit(self.dim_screen, (0, 0))
+        # Draw side bar
+        self.draw_text("You leveled up!", self.hud_font, 45, WHITE, 
+                        WIDTH / 2, HEIGHT / 3 - 50, align="center")
+        self.draw_text("Lvl: {}".format(self.player.level), self.hud_font, 30, WHITE, 
+                        WIDTH / 3, HEIGHT / 3 + 50, align="w")
+        self.draw_text("Exp. to next level: {}/100".format(self.player.exp), self.hud_font, 30, WHITE, 
+                        WIDTH / 3, HEIGHT / 3 + 80, align="w")
+        self.draw_text("Max HP: {}".format(self.player.stats['max_hp']), self.hud_font, 30, WHITE, 
+                        WIDTH / 3, HEIGHT / 3 + 110, align="w")
+        self.draw_text("Max MP: {}".format(self.player.stats['max_mp']), self.hud_font, 30, WHITE, 
+                        WIDTH / 3, HEIGHT / 3 + 140, align="w")
+        self.draw_text("Attack: {}".format(self.player.stats['attack']), self.hud_font, 30, WHITE, 
+                        WIDTH / 3, HEIGHT / 3 + 170, align="w")
+        pg.display.flip()
+        self.wait_for_key()
     def show_start_screen(self):
         # Game splash/start screen
         pass

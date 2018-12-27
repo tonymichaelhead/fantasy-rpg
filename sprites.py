@@ -95,7 +95,11 @@ class  Player(pg.sprite.Sprite):
         self.attack_success = False
         self.last_recovering = 0
         self.attack_buffer_start = 0
-        self.health = PLAYER_HEALTH
+        self.stats = {'max_hp': PLAYER_INIT_HEALTH,
+                      'max_mp': PLAYER_INIT_MP,
+                      'attack': PLAYER_INIT_ATTACK}
+        self.health = self.stats['max_hp']
+        self.current_mp = self.stats['max_mp']
         self.weapon = 'pistol'
         self.damaged = False
         # Player Inventory/Items
@@ -224,9 +228,13 @@ class  Player(pg.sprite.Sprite):
 
     def calculateExp(self):
         # Calculate experience points and increment level
-        if self.exp >= 100:
-            if self.exp > 100:
-                remainder = self.exp - 100
+        if self.exp >= 30:
+            self.stats['max_hp'] += 10
+            self.stats['max_mp'] += 3
+            self.stats['attack'] += 4
+            self.game.show_level_up()
+            if self.exp > 30:
+                remainder = self.exp - 30
             else:
                 remainder = 0
             self.level += 1
@@ -436,8 +444,8 @@ class  Player(pg.sprite.Sprite):
 
     def add_health(self, amount):
         self.health += amount
-        if self.health > PLAYER_HEALTH:
-            self.health = PLAYER_HEALTH
+        if self.health > self.player.stats['max_hp']:
+            self.health = self.player.stats['max_hp']
 
 
 class Mob(pg.sprite.Sprite):
