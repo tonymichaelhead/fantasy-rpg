@@ -869,4 +869,23 @@ class Quest:
         pg.mixer.music.set_volume(0.1)
         self.game.wait_for_confirm()
         pg.mixer.music.set_volume(1)
+    
+    def finish(self):
+        self.active = False
+        self.completed = True
+        pg.mixer.music.pause()
+        self.game.effects_sounds['level_up'].play()
+        self.game.screen.blit(self.game.dim_screen, (0, 0))
+        # Draw side bar
+        self.game.draw_text("Completed Quest!", self.game.hud_font, 45, WHITE, 
+                        WIDTH / 2, HEIGHT / 3 - 50, align="center")
+        self.game.draw_text("X {}".format(self.name), self.game.hud_font, 30, WHITE, 
+                        WIDTH / 2, HEIGHT / 3 + 50, align="center")
+        pg.display.flip()
+        pg.time.delay(2000)
+        pg.event.clear()
+        pg.mixer.music.unpause()
+        pg.mixer.music.set_volume(0.1)
+        self.game.wait_for_confirm()
+        pg.mixer.music.set_volume(1)
 

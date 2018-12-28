@@ -5,6 +5,9 @@ from sprites import Npc, Quest
 # Special character classes
 
 class HomeGirl(Npc):
+    def __init__(self, game, char_name, mode, facing, x, y):
+        super().__init__(game, char_name, mode, facing, x, y)
+        self.quest = None
 
     def talk(self):
         # Check if brother has been found and added to the game's variables
@@ -15,6 +18,7 @@ class HomeGirl(Npc):
         else:
             brother_exists = True
         if brother_exists:
+            # Brother is being returned for the first time
             if self.game.brother.found and not self.game.brother.brought_home:
                 self.game.brother.brought_home = True
                 self.game.brother.joined_party = False
@@ -27,11 +31,17 @@ class HomeGirl(Npc):
                 self.dialogue_2 = NPCS[self.char_name]['found_dialogue_2']
                 self.talked_to = False
             super().talk()
-            quest = Quest(self.game, self.game.player, "Find girl's brother", True)
-            self.game.player.quests.append(quest)
-            quest.start()
+            # If brother has been brought home and quest completed
+            if self.quest:  
+                if not self.quest.completed and self.game.brother.found:
+                    self.quest.finish() 
         else:
             super().talk()
+        # Start the quest if this is your first time talking to girl
+        if not self.quest:
+            self.quest = Quest(self.game, self.game.player, "Find girl's brother", True)
+            self.game.player.quests.append(self.quest)
+            self.quest.start()
 
 class Brother(Npc):
     def __init__(self, game, char_name, mode, facing, x, y):

@@ -413,9 +413,12 @@ class Game:
             if self.current_choice == 3:
                 self.draw_text("Quests", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
                 for i,quest in enumerate(self.player.quests):
-                    print(self.player.quests)
-                    self.draw_text(quest.name, self.hud_font, 30, WHITE, 
-                            WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
+                    if quest.active:
+                        self.draw_text(quest.name, self.hud_font, 30, WHITE, 
+                                WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
+                    if quest.completed:
+                        self.draw_text('X ' + quest.name, self.hud_font, 30, WHITE, 
+                                WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
             # Draw selection arrow at current choice
             self.selection_arrow_rect.center = (self.choices[self.current_choice]['pos'].x - 20,
                                                 self.choices[self.current_choice]['pos'].y)
