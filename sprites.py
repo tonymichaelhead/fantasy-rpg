@@ -855,7 +855,7 @@ class Quest:
     def start(self):
         self.active = True
         pg.mixer.music.pause()
-        self.game.effects_sounds['level_up'].play()
+        self.game.effects_sounds['quest_start'].play()
         self.game.screen.blit(self.game.dim_screen, (0, 0))
         # Draw side bar
         self.game.draw_text("New Quest!", self.game.hud_font, 45, WHITE, 

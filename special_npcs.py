@@ -8,6 +8,7 @@ class HomeGirl(Npc):
     def __init__(self, game, char_name, mode, facing, x, y):
         super().__init__(game, char_name, mode, facing, x, y)
         self.quest = None
+        self.game.home_girl = self
 
     def talk(self):
         # Check if brother has been found and added to the game's variables
@@ -38,7 +39,7 @@ class HomeGirl(Npc):
         else:
             super().talk()
         # Start the quest if this is your first time talking to girl
-        if not self.quest:
+        if not next((quest for quest in self.game.player.quests if quest.name == "Find girl's brother"), None):
             self.quest = Quest(self.game, self.game.player, "Find girl's brother", True)
             self.game.player.quests.append(self.quest)
             self.quest.start()
@@ -61,6 +62,11 @@ class Brother(Npc):
             self.found = True
             self.joined_party = True
             self.talked_to = False
+            # Check if quest has been initiated and initiate if not
+            if not self.game.home_girl.quest:
+                self.game.home_girl.quest = Quest(self.game, self.game.player, "Find girl's brother", True)
+                self.game.player.quests.append(self.game.home_girl.quest)
+                self.game.home_girl.quest.start()
 
     def update(self):
         if self.joined_party:
