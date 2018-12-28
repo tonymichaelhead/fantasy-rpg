@@ -39,9 +39,10 @@ class HomeGirl(Npc):
         else:
             super().talk()
         # Start the quest if this is your first time talking to girl
-        if not next((quest for quest in self.game.player.quests if quest.name == "Find girl's brother"), None):
-            self.quest = Quest(self.game, self.game.player, "Find girl's brother", True)
+        if not next((quest for quest in self.game.player.quests if quest.name == "Help girl find lost brother"), None):
+            self.quest = Quest(self.game, self.game.player, "Help girl find lost brother", True)
             self.game.player.quests.append(self.quest)
+            self.quest.sub_quests["Locate brother in the forest"]["active"] = True
             self.quest.start()
 
 class Brother(Npc):
@@ -64,7 +65,7 @@ class Brother(Npc):
             self.talked_to = False
             # Check if quest has been initiated and initiate if not
             if not self.game.home_girl.quest:
-                self.game.home_girl.quest = Quest(self.game, self.game.player, "Find girl's brother", True)
+                self.game.home_girl.quest = Quest(self.game, self.game.player, "Help girl find lost brother", True)
                 self.game.player.quests.append(self.game.home_girl.quest)
                 self.game.home_girl.quest.start()
 

@@ -5,6 +5,7 @@ from npc_data import *
 from tilemap import collide_hit_rect
 import pytweening as tween
 from itertools import chain, cycle
+import collections
 vec = pg.math.Vector2
 
 def collide_with_walls(sprite, group, dir):
@@ -850,9 +851,13 @@ class Quest:
         self.main_quest = main_quest
         self.active = False
         self.completed = False
+        self.sub_quests = collections.OrderedDict()
+        self.sub_quests["Locate brother in the forest"] = { "active": False, "completed": False }
+        self.sub_quests["bring boy home to girl"] = { "active": False, "completed": False }
     
     # Show starting of quest alert and details
     def start(self):
+        print(self.sub_quests)
         self.active = True
         pg.mixer.music.pause()
         self.game.effects_sounds['quest_start'].play()
@@ -860,8 +865,12 @@ class Quest:
         # Draw side bar
         self.game.draw_text("New Quest!", self.game.hud_font, 45, WHITE, 
                         WIDTH / 2, HEIGHT / 3 - 50, align="center")
-        self.game.draw_text("-> {}".format(self.name), self.game.hud_font, 30, WHITE, 
+        self.game.draw_text(self.name, self.game.hud_font, 30, WHITE, 
                         WIDTH / 2, HEIGHT / 3 + 50, align="center")
+        for i,sub_quest in enumerate(self.sub_quests):
+            if self.sub_quests[sub_quest]["active"]:
+                self.game.draw_text("-> {}".format(sub_quest), self.game.hud_font, 30, WHITE, 
+                                WIDTH / 2, HEIGHT / 3 + 80 + i * 30, align="center")
         pg.display.flip()
         pg.time.delay(2000)
         pg.event.clear()

@@ -415,7 +415,11 @@ class Game:
                 for i,quest in enumerate(self.player.quests):
                     if quest.active:
                         self.draw_text(quest.name, self.hud_font, 30, WHITE, 
-                                WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
+                                       WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
+                        for k,sub_quest in enumerate(quest.sub_quests):
+                            if quest.sub_quests[sub_quest]["active"]:
+                                self.draw_text("-> {}".format(sub_quest), self.hud_font, 30, WHITE, 
+                                                WIDTH / 2, HEIGHT / 3 + 40 + (i * 30) + (k * 30), align="center")
                     if quest.completed:
                         self.draw_text('X ' + quest.name, self.hud_font, 30, WHITE, 
                                 WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
