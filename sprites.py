@@ -446,7 +446,6 @@ class  Player(pg.sprite.Sprite):
         if self.health > self.player.stats['max_hp']:
             self.health = self.player.stats['max_hp']
 
-
 class Mob(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self._layer = MOB_LAYER

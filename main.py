@@ -624,8 +624,7 @@ class Game:
                 if event.type == pg.KEYUP:
                     if event.key == pg.K_RETURN:
                         waiting = False
-
-    
+ 
     def wait_for_menu_keys(self, choices):
         pg.event.wait()
         waiting = True
