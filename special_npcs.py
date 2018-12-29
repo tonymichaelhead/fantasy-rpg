@@ -1,6 +1,7 @@
 import pygame as pg
 from npc_data import *
-from sprites import Npc, Quest 
+from sprites import Npc
+from quests import *
 
 # Special character classes
 
@@ -35,12 +36,16 @@ class HomeGirl(Npc):
             # If brother has been brought home and quest completed
             if self.quest:  
                 if not self.quest.completed and self.game.brother.found:
+                    self.quest.sub_quests["Return brother to girl"]["active"] = False
+                    self.quest.sub_quests["Return brother to girl"]["completed"] = True
                     self.quest.finish() 
         else:
             super().talk()
         # Start the quest if this is your first time talking to girl
-        if not next((quest for quest in self.game.player.quests if quest.name == "Help girl find lost brother"), None):
-            self.quest = Quest(self.game, self.game.player, "Help girl find lost brother", True)
+        if not next((quest for quest in self.game.player.quests 
+                        if quest.description == QUEST_DATA["find_brother"]["description"]), None):
+            self.quest = Quest(self.game, self.game.player, QUEST_DATA["find_brother"]["description"], 
+                               True, QUEST_DATA["find_brother"]["sub_quests"])
             self.game.player.quests.append(self.quest)
             self.quest.sub_quests["Locate brother in the forest"]["active"] = True
             self.quest.start()
@@ -64,8 +69,12 @@ class Brother(Npc):
             self.joined_party = True
             self.talked_to = False
             # Check if quest has been initiated and initiate if not
-            if not self.game.home_girl.quest:
-                self.game.home_girl.quest = Quest(self.game, self.game.player, "Help girl find lost brother", True)
+            if self.game.home_girl.quest:
+                self.game.home_girl.quest.sub_quests["Return brother to girl"]["active"] = True
+                self.game.home_girl.quest.finish_sub_quest("Locate brother in the forest")
+            else:
+                self.game.home_girl.quest = Quest(self.game, self.game.player, True, 
+                                                  QUEST_DATA["find_brother"]["description"])
                 self.game.player.quests.append(self.game.home_girl.quest)
                 self.game.home_girl.quest.start()
 

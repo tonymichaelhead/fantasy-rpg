@@ -115,7 +115,7 @@ BOB_RANGE = 15
 BOB_SPEED = 0.4
 
 # Sounds
-BG_MUSIC = 'World Map.mp3'
+BG_MUSIC = 'TownTheme.mp3'
 MUSIC_HOME_TOWN = 'TownTheme.mp3'
 PLAYER_HIT_SOUNDS = ['pain/8.wav', 'pain/9.wav', 'pain/10.wav', 'pain/11.wav',]
 MOB_HIT_SOUND = 'wood_hit_04.ogg'

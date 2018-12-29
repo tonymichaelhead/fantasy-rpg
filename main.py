@@ -71,7 +71,64 @@ class Game:
             text_rect.center = (x, y)
         self.screen.blit(text_surface, text_rect)
     
+    def draw_in_game_menu(self):
+        self.screen.blit(self.dim_screen, (0, 0))
+        # Draw side bar
+        self.draw_text("Summary/Stats", self.hud_font, 22, WHITE, self.choices[0]['pos'].x, self.choices[0]['pos'].y, align="w")
+        self.draw_text("Inventory", self.hud_font, 22, WHITE, self.choices[1]['pos'].x, self.choices[1]['pos'].y, align="w")
+        self.draw_text("Weapons", self.hud_font, 22, WHITE, self.choices[2]['pos'].x, self.choices[2]['pos'].y, align="w")
+        self.draw_text("Quests", self.hud_font, 22, WHITE, self.choices[3]['pos'].x, self.choices[3]['pos'].y, align="w")
+        
+        self.draw_text("Gold: {}".format(self.player.wallet), self.hud_font, 30, WHITE, WIDTH - 50, HEIGHT - 50, align="e")
+
+        if self.current_choice == 0:
+            self.draw_text("Summary/Stats", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
+            self.draw_text("Lvl: {}".format(self.player.level), self.hud_font, 30, WHITE, 
+                            WIDTH / 3 - 10, HEIGHT / 3 + 10, align="w")
+            self.draw_text("Exp. to next level: {}/100".format(self.player.exp), self.hud_font, 30, WHITE, 
+                            WIDTH / 3 - 10, HEIGHT / 3 + 40, align="w")
+            self.draw_text("Max HP: {}".format(self.player.health), self.hud_font, 30, WHITE, 
+                            WIDTH / 3 - 10, HEIGHT / 3 + 70, align="w")
+            self.draw_text("Max MP: {}".format(40), self.hud_font, 30, WHITE, 
+                            WIDTH / 3 - 10, HEIGHT / 3 + 100, align="w")
+            self.draw_text("Attack: {}".format(self.player.stats['attack']), self.hud_font, 30, WHITE, 
+                            WIDTH / 3 - 10, HEIGHT / 3 + 130, align="w")
+            
+        if self.current_choice == 1:
+            self.draw_text("Inventory", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
+            inventory_hist = make_hist(self.player.inventory)
+            for i,item in enumerate(inventory_hist):
+                self.draw_text(item + " x" + str(inventory_hist[item]), self.hud_font, 30, WHITE, 
+                        WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
+        if self.current_choice == 2:
+            self.draw_text("Weapons", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
+            weapon_hist = make_hist(self.player.weapons)
+            for i,weapon in enumerate(weapon_hist):
+                self.draw_text(weapon, self.hud_font, 30, WHITE, 
+                        WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
+        if self.current_choice == 3:
+            self.draw_text("Quests", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
+            for i,quest in enumerate(self.player.quests):
+                if quest.active:
+                    self.draw_text(quest.description, self.hud_font, 30, WHITE, 
+                                    WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
+                    for k,sub_quest in enumerate(quest.sub_quests):
+                        if quest.sub_quests[sub_quest]["completed"]:
+                            self.draw_text("X {}".format(sub_quest), self.hud_font, 18, WHITE, 
+                                            WIDTH / 2, HEIGHT / 3 + 40 + (i * 30) + (k * 30), align="center")
+                        elif quest.sub_quests[sub_quest]["active"]:
+                            self.draw_text("-> {}".format(sub_quest), self.hud_font, 18, WHITE, 
+                                            WIDTH / 2, HEIGHT / 3 + 40 + (i * 30) + (k * 30), align="center")
+                if quest.completed:
+                    self.draw_text('X ' + quest.description, self.hud_font, 30, WHITE, 
+                            WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
+        # Draw selection arrow at current choice
+        self.selection_arrow_rect.center = (self.choices[self.current_choice]['pos'].x - 20,
+                                            self.choices[self.current_choice]['pos'].y)
+        self.screen.blit(self.selection_arrow, self.selection_arrow_rect)
+    
     def draw_menu(self):
+        # Draws merchant menu
         title_font = pg.font.Font(self.hud_font, 45)
         choice_font = pg.font.Font(self.hud_font, 30)
         self.menu_title = title_font.render("What would you like?", True, WHITE)
@@ -90,38 +147,6 @@ class Game:
             self.menu_choices.append(choice_font.render(choices[i]['choice'], True, WHITE))
             self.menu_choice_rects.append(self.menu_choices[i].get_rect())
             self.menu_choice_rects[i].center = (WIDTH / 2, HEIGHT / 3 + i * 50)
-
-        # self.menu_choice_2 = choice_font.render("Revolver            150 gold", True, WHITE)
-        # self.menu_choice_2_rect = self.menu_choice_2.get_rect()
-        # self.menu_choice_2_rect.center = (WIDTH / 2, HEIGHT / 3 + 50)
-
-        # self.menu_choice_3 = choice_font.render("Cloak                     100 gold", True, WHITE)
-        # self.menu_choice_3_rect = self.menu_choice_3.get_rect()
-        # self.menu_choice_3_rect.center = (WIDTH / 2, HEIGHT / 3 + 100)
-        # self.draw_text("What would you like?", self.hud_font, 45, WHITE, WIDTH / 2, 50, align="center")
-        # self.draw_text("Potion                    10 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3, align="center")
-        # self.draw_text("Revolver            150 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3 + 50, align="center")
-        # self.draw_text("Cloak                     100 gold", self.hud_font, 30, WHITE, WIDTH / 2, HEIGHT / 3 + 100, align="center")
-        
-        # if align == "nw":
-        #     text_rect.topleft = (x, y)
-        # if align == "ne":
-        #     text_rect.topright = (x, y)
-        # if align == "sw":
-        #     text_rect.bottomleft = (x, y)
-        # if align == "se":
-        #     text_rect.bottomright = (x, y)
-        # if align == "n":
-        #     text_rect.midtop = (x, y)
-        # if align == "s":
-        #     text_rect.midbottom = (x, y)
-        # if align == "e":
-        #     text_rect.midright = (x, y)
-        # if align == "w":
-        #     text_rect.midleft = (x, y)
-        # if align == "center":
-        #     text_rect.center = (x, y)
-        
 
     def draw_dialogue(self, text):
         dialogue_box = pg.Surface((WIDTH / 2, 100)).convert_alpha()
@@ -215,7 +240,7 @@ class Game:
         self.npcs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         self.items = pg.sprite.Group()
-        self.map = TiledMap(path.join(self.map_folder, 'forest1.tmx'))
+        self.map = TiledMap(path.join(self.map_folder, 'begins.tmx'))
         self.map_img = self.map.make_map()
         self.map_img = pg.transform.scale(self.map_img, (self.map.width, self.map.height))
         self.map_rect = self.map_img.get_rect()
@@ -251,7 +276,6 @@ class Game:
         # self.effects_sounds['level_start'].play()
 
         # Quest variables
-
 
     def run(self):
         # Game loop - set self.playing = False to end the game
@@ -341,7 +365,7 @@ class Game:
             pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
         for y in range(0, WIDTH, TILESIZE):
             pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
-
+    
     def render_fog(self):
         # Draw the light mask (gradient) onto fog image
         self.fog.fill(NIGHT_COLOR)
@@ -373,61 +397,8 @@ class Game:
                 self.screen.blit(self.menu_title, self.menu_title_rect)
                 for i, choice in enumerate(self.menu_choices):
                     self.screen.blit(self.menu_choices[i], self.menu_choice_rects[i])
-        
-        # Draw in game menu
-        if self.in_game_menu: #TODO: Refactor into a menu draw method
-            self.screen.blit(self.dim_screen, (0, 0))
-            # Draw side bar
-            self.draw_text("Summary/Stats", self.hud_font, 22, WHITE, self.choices[0]['pos'].x, self.choices[0]['pos'].y, align="w")
-            self.draw_text("Inventory", self.hud_font, 22, WHITE, self.choices[1]['pos'].x, self.choices[1]['pos'].y, align="w")
-            self.draw_text("Weapons", self.hud_font, 22, WHITE, self.choices[2]['pos'].x, self.choices[2]['pos'].y, align="w")
-            self.draw_text("Quests", self.hud_font, 22, WHITE, self.choices[3]['pos'].x, self.choices[3]['pos'].y, align="w")
-            
-            self.draw_text("Gold: {}".format(self.player.wallet), self.hud_font, 30, WHITE, WIDTH - 50, HEIGHT - 50, align="e")
-
-            if self.current_choice == 0:
-                self.draw_text("Summary/Stats", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
-                self.draw_text("Lvl: {}".format(self.player.level), self.hud_font, 30, WHITE, 
-                               WIDTH / 3 - 10, HEIGHT / 3 + 10, align="w")
-                self.draw_text("Exp. to next level: {}/100".format(self.player.exp), self.hud_font, 30, WHITE, 
-                               WIDTH / 3 - 10, HEIGHT / 3 + 40, align="w")
-                self.draw_text("Max HP: {}".format(self.player.health), self.hud_font, 30, WHITE, 
-                               WIDTH / 3 - 10, HEIGHT / 3 + 70, align="w")
-                self.draw_text("Max MP: {}".format(40), self.hud_font, 30, WHITE, 
-                               WIDTH / 3 - 10, HEIGHT / 3 + 100, align="w")
-                self.draw_text("Attack: {}".format(self.player.stats['attack']), self.hud_font, 30, WHITE, 
-                               WIDTH / 3 - 10, HEIGHT / 3 + 130, align="w")
-                
-            if self.current_choice == 1:
-                self.draw_text("Inventory", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
-                inventory_hist = make_hist(self.player.inventory)
-                for i,item in enumerate(inventory_hist):
-                    self.draw_text(item + " x" + str(inventory_hist[item]), self.hud_font, 30, WHITE, 
-                            WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
-            if self.current_choice == 2:
-                self.draw_text("Weapons", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
-                weapon_hist = make_hist(self.player.weapons)
-                for i,weapon in enumerate(weapon_hist):
-                    self.draw_text(weapon, self.hud_font, 30, WHITE, 
-                            WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
-            if self.current_choice == 3:
-                self.draw_text("Quests", self.hud_font, 45, WHITE, WIDTH / 2, 60, align="center")
-                for i,quest in enumerate(self.player.quests):
-                    if quest.active:
-                        self.draw_text(quest.name, self.hud_font, 30, WHITE, 
-                                       WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
-                        for k,sub_quest in enumerate(quest.sub_quests):
-                            if quest.sub_quests[sub_quest]["active"]:
-                                self.draw_text("-> {}".format(sub_quest), self.hud_font, 30, WHITE, 
-                                                WIDTH / 2, HEIGHT / 3 + 40 + (i * 30) + (k * 30), align="center")
-                    if quest.completed:
-                        self.draw_text('X ' + quest.name, self.hud_font, 30, WHITE, 
-                                WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
-            # Draw selection arrow at current choice
-            self.selection_arrow_rect.center = (self.choices[self.current_choice]['pos'].x - 20,
-                                                self.choices[self.current_choice]['pos'].y)
-            self.screen.blit(self.selection_arrow, self.selection_arrow_rect)
-            
+        if self.in_game_menu:
+            self.draw_in_game_menu()
         # *after* drawing everything, flip the display
         # HUD functions
         draw_player_health(self.screen, 10, 10, self.player.health / self.player.stats['max_hp'])
