@@ -588,7 +588,39 @@ class Game:
 
     def show_start_screen(self):
         # Game splash/start screen
-        pass
+        choices = {0: {'pos': vec(WIDTH / 2 - 100, HEIGHT * 3 / 4)},
+                   1: {'pos': vec(WIDTH / 2 - 100, HEIGHT * 3 / 4 + 30)}}
+        current_choice = 0
+        waiting = True
+
+        while waiting:
+            self.screen.fill(BLACK)
+            self.draw_text("Castlewalker", self.hud_font, 100, WHITE, 
+                        WIDTH / 2, HEIGHT / 2, align="center")
+            self.draw_text("New game", self.hud_font, 30, WHITE, 
+                        WIDTH / 2, HEIGHT * 3 / 4, align="center")
+            self.draw_text("Load game", self.hud_font, 30, WHITE, 
+                        WIDTH / 2, HEIGHT * 3 / 4 + 30, align="center")
+            arrow_pos = choices[current_choice]            
+            self.draw_text("> ", self.hud_font, 30, WHITE, 
+                           arrow_pos['pos'].x, 
+                           arrow_pos['pos'].y, align="w")
+            pg.display.flip()
+            selection = self.wait_for_selection()
+            if selection == 'up':
+                if current_choice > 0:
+                    current_choice -= 1
+                else:
+                    current_choice = len(choices) - 1
+            if selection == 'down':
+                if current_choice < len(choices) - 1:
+                    current_choice += 1
+                else:
+                    current_choice = 0
+            if selection == 'select':
+                waiting = False
+
+        # Load or start new game based on selection
 
     def show_go_screen(self):
         # Game over/continue
@@ -624,6 +656,29 @@ class Game:
                 if event.type == pg.KEYUP:
                     if event.key == pg.K_RETURN:
                         waiting = False
+
+    def wait_for_selection(self):
+        pg.event.wait()
+        waiting = True
+        while waiting:
+            self.clock.tick(FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.quit()
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_UP:
+                        waiting = False
+                        return 'up'
+                    if event.key == pg.K_DOWN:
+                        waiting = False
+                        return 'down'
+                    if event.key == pg.K_ESCAPE:
+                        waiting = False
+                        return 'cancel'
+                    if event.key == pg.K_LCTRL or event.key == pg.K_RCTRL:
+                        waiting = False
+                        return 'select'
  
     def wait_for_menu_keys(self, choices):
         pg.event.wait()
