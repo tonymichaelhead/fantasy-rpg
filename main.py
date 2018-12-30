@@ -161,6 +161,7 @@ class Game:
         img_folder = path.join(game_folder, 'img')
         snd_folder = path.join(game_folder, 'snd')
         self.music_folder = path.join(game_folder, 'music')
+        
         # Load sprite sheets
         self.spritesheet = SpriteSheet(path.join(img_folder, PLAYER_SPRITESHEET))
         self.mob_spritesheet = SpriteSheet(path.join(img_folder, MOB_SPRITESHEET))
@@ -189,14 +190,15 @@ class Game:
         self.item_images = {}
         for item in ITEM_IMAGES:
             self.item_images[item] = pg.image.load(path.join(img_folder, ITEM_IMAGES[item])).convert_alpha()
+        
         # Lighting effect
         self.fog = pg.Surface((WIDTH, HEIGHT))
         self.fog.fill(NIGHT_COLOR)
         self.light_mask = pg.image.load(path.join(img_folder, LIGHT_MASK)).convert_alpha()
         self.light_mask = pg.transform.scale(self.light_mask, LIGHT_RADIUS)
         self.light_rect = self.light_mask.get_rect()
+        
         # Sound loading
-        pg.mixer.music.load(path.join(self.music_folder, BG_MUSIC))
         self.effects_sounds = {}
         for type in EFFECTS_SOUNDS:
             self.effects_sounds[type] = pg.mixer.Sound(path.join(snd_folder, EFFECTS_SOUNDS[type]))
@@ -587,6 +589,9 @@ class Game:
         pg.mixer.music.set_volume(1)
 
     def show_start_screen(self):
+        pg.mixer.music.load(path.join(self.music_folder, START_BGM))
+        pg.mixer.music.play()
+        
         # Game splash/start screen
         choices = {0: {'pos': vec(WIDTH / 2 - 100, HEIGHT * 3 / 4)},
                    1: {'pos': vec(WIDTH / 2 - 100, HEIGHT * 3 / 4 + 30)}}
@@ -621,6 +626,8 @@ class Game:
                 waiting = False
 
         # Load or start new game based on selection
+        pg.mixer.music.load(path.join(self.music_folder, BG_MUSIC))
+        pg.mixer.music.play()
 
     def show_go_screen(self):
         # Game over/continue

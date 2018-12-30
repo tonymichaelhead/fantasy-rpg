@@ -115,6 +115,7 @@ BOB_RANGE = 15
 BOB_SPEED = 0.4
 
 # Sounds
+START_BGM = 'RPG Ambient 3.mp3'
 BG_MUSIC = 'TownTheme.mp3'
 MUSIC_HOME_TOWN = 'TownTheme.mp3'
 PLAYER_HIT_SOUNDS = ['pain/8.wav', 'pain/9.wav', 'pain/10.wav', 'pain/11.wav',]

@@ -117,7 +117,7 @@ class  Player(pg.sprite.Sprite):
         self.standing_frame_l = pg.transform.scale(self.standing_frame_l, (36, 48))
         self.standing_frame_r = pg.transform.flip(self.standing_frame_l, True, False)
         
-        # # Walking
+        # Walking
         self.raw_walk_frames_b = [self.game.spritesheet.get_image(3, 65, 26, 31),
                                   self.game.spritesheet.get_image(35, 63, 24, 32),
                                   self.game.spritesheet.get_image(67, 65, 26, 32)]
@@ -245,7 +245,7 @@ class  Player(pg.sprite.Sprite):
             self.attacking = True
             self.attack_lunge = chain(ATTACK_LUNGE)
             self.attack_success = False
-        print('attack!')
+        
         now = pg.time.get_ticks()
         if now - self.last_attack > ATTACK_FREQUENCY:
             self.last_attack = now
