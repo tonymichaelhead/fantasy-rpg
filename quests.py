@@ -35,7 +35,7 @@ class Quest:
         for i,sub_quest in enumerate(self.sub_quests):
             if self.sub_quests[sub_quest]["active"]:
                 self.game.draw_text("-> {}".format(sub_quest), self.game.hud_font, 18, WHITE, 
-                                WIDTH / 2, HEIGHT / 3 + 80 + i * 30, align="center")
+                                WIDTH / 2, HEIGHT / 3 + 100 + i * 30, align="center")
         pg.display.flip()
         pg.time.delay(2000)
         pg.event.clear()
@@ -53,12 +53,12 @@ class Quest:
         # Draw side bar
         self.game.draw_text("Completed Quest!", self.game.hud_font, 45, WHITE, 
                         WIDTH / 2, HEIGHT / 3 - 50, align="center")
-        self.game.draw_text("X {}".format(self.description), self.game.hud_font, 30, WHITE, 
+        self.game.draw_text("o {}".format(self.description), self.game.hud_font, 30, WHITE, 
                         WIDTH / 2, HEIGHT / 3 + 50, align="center")
         for i,sub_quest in enumerate(self.sub_quests):
             if self.sub_quests[sub_quest]["completed"]:
-                self.game.draw_text("X {}".format(sub_quest), self.game.hud_font, 18, WHITE, 
-                                WIDTH / 2, HEIGHT / 3 + 80 + i * 30, align="center")
+                self.game.draw_text("o {}".format(sub_quest), self.game.hud_font, 18, WHITE, 
+                                WIDTH / 2, HEIGHT / 3 + 100 + i * 30, align="center")
         pg.display.flip()
         pg.time.delay(2000)
         pg.event.clear()
@@ -80,11 +80,11 @@ class Quest:
                         WIDTH / 2, HEIGHT / 3 + 50, align="center")
         for i,sub_quest in enumerate(self.sub_quests):
             if self.sub_quests[sub_quest]["completed"]:
-                self.game.draw_text("X {}".format(sub_quest), self.game.hud_font, 18, WHITE, 
-                                WIDTH / 2, HEIGHT / 3 + 80 + i * 30, align="center")
+                self.game.draw_text("o {}".format(sub_quest), self.game.hud_font, 18, WHITE, 
+                                WIDTH / 2, HEIGHT / 3 + 100 + i * 30, align="center")
             if self.sub_quests[sub_quest]["active"]:
                 self.game.draw_text("-> {}".format(sub_quest), self.game.hud_font, 18, WHITE, 
-                                WIDTH / 2, HEIGHT / 3 + 80 + i * 30, align="center")
+                                WIDTH / 2, HEIGHT / 3 + 100 + i * 30, align="center")
         pg.display.flip()
         pg.time.delay(2000)
         pg.event.clear()

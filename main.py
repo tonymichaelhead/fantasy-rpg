@@ -114,13 +114,13 @@ class Game:
                                     WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
                     for k,sub_quest in enumerate(quest.sub_quests):
                         if quest.sub_quests[sub_quest]["completed"]:
-                            self.draw_text("X {}".format(sub_quest), self.hud_font, 18, WHITE, 
-                                            WIDTH / 2, HEIGHT / 3 + 40 + (i * 30) + (k * 30), align="center")
+                            self.draw_text("o {}".format(sub_quest), self.hud_font, 18, WHITE, 
+                                            WIDTH / 2, HEIGHT / 3 + 60 + (i * 30) + (k * 30), align="center")
                         elif quest.sub_quests[sub_quest]["active"]:
                             self.draw_text("-> {}".format(sub_quest), self.hud_font, 18, WHITE, 
-                                            WIDTH / 2, HEIGHT / 3 + 40 + (i * 30) + (k * 30), align="center")
+                                            WIDTH / 2, HEIGHT / 3 + 60 + (i * 30) + (k * 30), align="center")
                 if quest.completed:
-                    self.draw_text('X ' + quest.description, self.hud_font, 30, WHITE, 
+                    self.draw_text('o ' + quest.description, self.hud_font, 30, WHITE, 
                             WIDTH / 3 - 10, HEIGHT / 3 + 10 + i * 30, align="w")
         # Draw selection arrow at current choice
         self.selection_arrow_rect.center = (self.choices[self.current_choice]['pos'].x - 20,
