@@ -149,7 +149,7 @@ class Game:
             self.menu_choice_rects[i].center = (WIDTH / 2, HEIGHT / 3 + i * 50)
 
     def draw_dialogue(self, text):
-        dialogue_box = pg.Surface((WIDTH / 2, 100)).convert_alpha()
+        dialogue_box = pg.Surface((WIDTH * 2 / 3, 100)).convert_alpha()
         dialogue_box.fill((0,0,0, 180))
         dialogue_rect = dialogue_box.get_rect()
         dialogue_rect.center = (WIDTH / 2, HEIGHT / 2)
